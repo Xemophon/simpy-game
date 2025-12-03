@@ -1,27 +1,8 @@
 #Libs
 from random import randint
-from time import sleep
 import items as game
 import objects as temp
-
-#Colors
-RED = '\033[91m'
-GREEN = '\033[92m'
-ORANGE = '\033[93m'
-BLUE = '\033[94m'
-MAGENTA = '\033[95m' 
-CYAN = '\033[96m'
-BOLD = '\033[1m'
-RESET = '\033[0m'
-MONSTER_ART = r"""
-    __/\__
-   ( O  O )
-  ( \ -- / )
-  \ \__/\ / /
-   \ )  ( /
-   /______\
-  |________|         
-"""
+from misc_actions import *
 
 global_potions = {}
 for potion in game.potions:
@@ -35,8 +16,12 @@ global_spells_l = []
 for spell in game.spells:
     global_spells_l.append(spell.name)
 
-active_debuffs = {}
-active_buffs = {}
+#Active Buffs and Debuffs
+active_debuffs_m = {}
+active_buffs_m = {}
+
+active_debuffs_p = {}
+active_buffs_p = {}
 
 def choice_f(cont, choice_f):
         if choice_f == 1:
@@ -53,22 +38,39 @@ def atks_func(cont):
         print(f"  {BLUE}2. ✨ MAGICAL SPELL{RESET}")
         atks = int(input("Select type (1 or 2): "))
         if atks == 1 or cont.mana <= 0:
-            cont.attack(game.monster)
+            game.player.attack(game.monster)
         elif atks == 2 and cont.mana > 0:
             spells_l = global_spells_l
             for spell in game.spells:
-                print(
-                f"{MAGENTA}{BOLD}✧ Arcane Spell:{RESET} {MAGENTA}{spell.name}{RESET} "
-                f"(Use {BLUE}{spell.exhaust}{RESET} Mana) — "
-                f"Hits for {ORANGE}{spell.atpower} Damage{RESET}"
-                    )
+                if isinstance(spell, temp.Debuff):
+                    print(
+                    f"{CYAN}{BOLD}✧ Debuff Spell:{RESET} {MAGENTA}{spell.name}{RESET} "
+                    f"(Use {BLUE}{spell.exhaust}{RESET} Mana) — "
+                    f"Hits for {ORANGE}{spell.atpower} Damage{RESET}"
+                    f" | Has {CYAN}{spell.effect} Effect for {spell.duration} turns{RESET}"
+                        )
+                elif isinstance(spell, temp.Buff):
+                    print(
+                    f"{GREEN}{BOLD}✧ Buff Spell:{RESET} {MAGENTA}{spell.name}{RESET} "
+                    f"(Use {BLUE}{spell.exhaust}{RESET} Mana) — "
+                    f"Has {CYAN}{spell.effect} Effect for {spell.duration} turns{RESET}"
+                        )
+                else:
+                    print(
+                    f"{MAGENTA}{BOLD}✧ Arcane Spell:{RESET} {MAGENTA}{spell.name}{RESET} "
+                    f"(Use {BLUE}{spell.exhaust}{RESET} Mana) — "
+                    f"Hits for {ORANGE}{spell.atpower} Damage{RESET}"
+                        )
             spellc = int(input("Choose spell: "))
-            cont.spell(game.spells[spellc - 1], game.monster)
             if isinstance(game.spells[spellc - 1], temp.Debuff):
-                active_debuffs.update({(game.spells[spellc - 1]) : (game.spells[spellc - 1]).duration})
+                active_debuffs_m.update({(game.spells[spellc - 1]) : (game.spells[spellc - 1]).duration})
+            elif isinstance(game.spells[spellc - 1], temp.Buff):
+                active_debuffs_p.update({(game.spells[spellc - 1]) : (game.spells[spellc - 1]).duration})
+            else:
+                game.player.spell(game.spells[spellc - 1], game.monster)
     elif cont == game.monster:
         print_banner("MONSTER SLASH", color=RED, separator='-')
-        cont.attack(game.player)
+        game.monster.attack(game.player)
 
 def potion_func(cont):
     potion_l = global_potions
@@ -80,12 +82,18 @@ def potion_func(cont):
                 f"{CYAN}{BOLD}✧ Potion :{RESET} {CYAN}{potion}{RESET} | {potion_l[potion]} left | "
                 f"Returns {BLUE}{game.potions[ind].remana}{RESET} Mana | "
                 f"Rejuvanates {GREEN}{game.potions[ind].heal} Health{RESET} |"
+                f"Costs {ORANGE}{game.potions[ind].price} money{RESET} |"
                 )
             ind += 1
         potionc = int(input("Choose potion with number: "))
-        print_banner("HEAL ACTION", color=GREEN, separator='-')
-        (game.potions[potionc - 1]).quantity -= 1
-        potion_l[(game.potions[potionc - 1]).name] -= 1
+        if cont.money >= (game.potions[potionc - 1]).price:
+            print_banner("HEAL ACTION", color=GREEN, separator='-')
+            (game.potions[potionc - 1]).quantity -= 1
+            potion_l[(game.potions[potionc - 1]).name] -= 1
+            cont.money -= (game.potions[potionc - 1]).price
+        else:
+            print("Not enough assets")
+            raise IndexError
     elif cont == game.monster:
         print_banner("HEAL ACTION", color=GREEN, separator='-')
         potionc = randint(1,3)
@@ -105,87 +113,80 @@ def potion_func(cont):
 def item_func(cont):
     print_banner("EQUIPMENT/ITEM USE", color=MAGENTA, separator='^')
     items_dic = global_items_dic
+    ind = 0
     for item in items_dic.keys():
-        print(f"{ORANGE}{BOLD}✧ Item :{RESET} {ORANGE}{item}{RESET} | {items_dic[item]} left |")
+        print(f"{ORANGE}{BOLD}✧ Item :{RESET} {ORANGE}{item}{RESET} | {items_dic[item]} left | Costs {game.items_u[ind].price}")
+        ind += 1
     itemsc = int(input("Choose item with number: "))
-    cont.equip(game.items_u[itemsc - 1])
-    (game.items_u[itemsc - 1]).quantity -= 1
-    items_dic[(game.items_u[itemsc - 1]).name] -= 1
-    print(f"{GREEN}Equipped!{RESET}")
-    for name in items_dic.keys():
-        if items_dic[name] == 0:
-            items_dic.pop(name)
-            game.items_u.pop(itemsc - 1)
-            break
+    if cont.money >= game.items_u[itemsc - 1].price:
+        cont.money -= game.items_u[itemsc - 1].price
+        cont.equip(game.items_u[itemsc - 1])
+        (game.items_u[itemsc - 1]).quantity -= 1
+        items_dic[(game.items_u[itemsc - 1]).name] -= 1
+        print(f"{GREEN}Equipped!{RESET}")
+        for name in items_dic.keys():
+            if items_dic[name] == 0:
+                items_dic.pop(name)
+                game.items_u.pop(itemsc - 1)
+                break
+    else:
+        print(f"{RED}Not enough assets{RESET}")
+        raise IndexError
 
-def debuff_effect():
-    if active_debuffs:
-        for element in list(active_debuffs.keys()):
-            active_debuffs[element] -= 1
-            if active_debuffs[element] <= 0:
+def debuff_effect(cont):
+    if active_debuffs_m and cont == game.monster:
+        for element in list(active_debuffs_m.keys()):
+            active_debuffs_m[element] -= 1
+            if active_debuffs_m[element] < 0:
                 print(f"The effect of {element.effect} has worn off!")
                 if element.effect == "Stun":
-                    game.stunned = False                    
-                del active_debuffs[element]
+                    cont.isStunned = False                    
+                del active_debuffs_m[element]
                 continue 
 
             if element.effect == "Poison":
-                game.monster.debuff(element) 
-                print(f"{RED}☠️ Poison deals damage!{RESET}")
+                cont.debuff(element)
             elif element.effect == "Stun":
-                game.stunned = True
+                cont.isStunned = True
 
-def _generate_stat_line(cont):
-    health_coef = cont.health / cont.max_health
-    mana_coef = cont.mana / 200
-    bar_length = 20
-    if cont == game.player:
-        pl_label = f"{GREEN}Player{RESET} " 
-        health_color = GREEN if health_coef > 0.5 else ORANGE if health_coef > 0.25 else RED
-        mana_color = BLUE
-    else: # Monster
-        pl_label = f"{RED}Monster{RESET}"
-        health_color = GREEN if health_coef > 0.5 else ORANGE if health_coef > 0.25 else RED
-        mana_color = BLUE
-    # 1. Health Bar
-    health_bar_filled = health_color + '█' * int(bar_length * health_coef) + RESET
-    health_bar_empty = '░' * (bar_length - int(bar_length * health_coef))
-    health_part = (
-        f"{pl_label} Health: "
-        f"{health_bar_filled}{health_bar_empty} "
-        f"{int(cont.health):>3}/{cont.max_health:<3}"
-    )
-    # 2. Mana Bar
-    mana_bar_filled = mana_color + '█' * int(bar_length * mana_coef) + RESET
-    mana_bar_empty = '░' * (bar_length - int(bar_length * mana_coef))
-    mana_part = (
-        f"| Mana: {mana_bar_filled}{mana_bar_empty} "
-        f"{int(cont.mana):>3}/200"
-    )
-    return health_part + " " + mana_part
+    elif active_debuffs_p and cont == game.player:
+        for element in list(active_debuffs_p.keys()):
+            active_debuffs_p[element] -= 1
+            if active_debuffs_p[element] < 0:
+                print(f"The effect of {element.effect} has worn off!")
+                if element.effect == "Stun":
+                    cont.isStunned = False                    
+                del active_debuffs_p[element]
+                continue 
 
-def display_battle_status(monster,player):
-    print(MONSTER_ART) 
-    print_banner("BATTLE STATS", color=BLUE, separator='~')
-    monster_line = _generate_stat_line(monster)
-    player_line = _generate_stat_line(player)
-    monster_extra_stats = f"{RED}Damage: {monster.damage:<4} | Shield: {CYAN}{monster.shield}{RESET}"
-    player_extra_stats = f"{GREEN}Damage: {player.damage:<4} | Shield: {CYAN}{player.shield}{RESET}"
-    print(monster_line + f" {monster_extra_stats}")
-    print(player_line + f" {player_extra_stats}")
-    
-    print(CYAN + "=" * 90 + RESET)
+            if element.effect == "Poison":
+                cont.debuff(element)
+            elif element.effect == "Stun":
+                cont.isStunned = True
 
-def print_banner(text, color=BLUE, separator="="):
-    """Prints a centered, colorized banner."""
-    length = 45
-    fill = separator * ((length - len(text) - 2) // 2)
-    print(f"{color}{fill} {text} {fill}{RESET}")
+def buff_effect(cont):
+    if active_buffs_m and cont == game.monster:
+        for element in list(active_buffs_m.keys()):
+            active_buffs_m[element] -= 1
+            if active_buffs_m[element] < 0:
+                print(f"The effect of {element.effect} has worn off!")
+                if element.effect == "Strength":
+                    cont.damage -= element.atpower*element.duration
+                if element.effect == "Resistance":
+                    cont.damage -= element.atpower*element.duration       
+                del active_buffs_m[element]
+                continue 
+            cont.buff(element)
 
-def print_splash_screen():
-    print(CYAN + "=" * 50 + RESET)
-    print(f"{CYAN}       {MAGENTA}SIMPLE CONSOLE RPG - BATTLE COMMENCE!{RESET}")
-    print(CYAN + "=" * 50 + RESET)
-    print(f"{RED}Your enemy appears...{RESET}")
-    print(MONSTER_ART)
-    sleep(1)
+    elif active_buffs_p and cont == game.player:
+        for element in list(active_buffs_p.keys()):
+            active_buffs_p[element] -= 1
+            if active_buffs_p[element] < 0:
+                print(f"The effect of {element.effect} has worn off!")
+                if element.effect == "Strength":
+                    cont.damage -= element.atpower*element.duration
+                if element.effect == "Resistance":
+                    cont.damage -= element.atpower*element.duration       
+                del active_buffs_p[element]
+                continue 
+            cont.buff(element)
