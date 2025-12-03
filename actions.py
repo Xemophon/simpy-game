@@ -160,51 +160,28 @@ def item_func(cont):
         print(f"{RED}Not enough assets{RESET}")
         raise IndexError
 
-def debuff_effect(cont):
-    if active_debuffs_m and cont == game.monster:
-        for element in list(active_debuffs_m.keys()):
-            active_debuffs_m[element] -= 1
-            if active_debuffs_m[element] < 0:
+def debuff_effect(cont, debuff_list):
+    if debuff_list:
+        for element in list(debuff_list.keys()):
+            debuff_list[element] -= 1
+            if debuff_list[element] < 0:
                 print(f"The effect of {element.effect} has worn off!")
                 if element.effect == "Stun":
                     cont.isStunned = False                    
-                del active_debuffs_m[element]
+                del debuff_list[element]
                 continue
-
-    elif active_debuffs_p and cont == game.player:
-        for element in list(active_debuffs_p.keys()):
-            active_debuffs_p[element] -= 1
-            if active_debuffs_p[element] < 0:
-                print(f"The effect of {element.effect} has worn off!")
-                if element.effect == "Stun":
-                    cont.isStunned = False                    
-                del active_debuffs_p[element]
-                continue 
             cont.debuff(element)
 
-def buff_effect(cont):
-    if active_buffs_m and cont == game.monster:
-        for element in list(active_buffs_m.keys()):
-            active_buffs_m[element] -= 1
-            if active_buffs_m[element] < 0:
+def buff_effect(cont, buff_list):
+    if buff_list:
+        for element in list(buff_list.keys()):
+            buff_list[element] -= 1
+            if buff_list[element] < 0:
                 print(f"The effect of {element.effect} has worn off!")
                 if element.effect == "Strength":
                     cont.damage -= element.atpower*element.duration
                 if element.effect == "Resistance":
                     cont.shield -= element.atpower*element.duration       
-                del active_buffs_m[element]
-                continue 
-            cont.buff(element)
-
-    elif active_buffs_p and cont == game.player:
-        for element in list(active_buffs_p.keys()):
-            active_buffs_p[element] -= 1
-            if active_buffs_p[element] < 0:
-                print(f"The effect of {element.effect} has worn off!")
-                if element.effect == "Strength":
-                    cont.damage -= element.atpower*element.duration
-                if element.effect == "Resistance":
-                    cont.shield -= element.atpower*element.duration       
-                del active_buffs_p[element]
+                del buff_list[element]
                 continue 
             cont.buff(element)

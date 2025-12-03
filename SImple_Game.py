@@ -13,8 +13,8 @@ clean_up()
 while player.health > 0 and monster.health > 0:
     try:
         print_banner(f"BATTLE ROUND {bround}", color=BLUE, separator='=')
-        debuff_effect(game.player)
-        buff_effect(game.player)
+        debuff_effect(game.player, active_debuffs_p)
+        buff_effect(game.player, active_buffs_p)
         if game.player.isStunned == False:
             print_banner("ACTION PHASE", color=BLUE, separator='-')
             print(
@@ -36,8 +36,8 @@ while player.health > 0 and monster.health > 0:
             print_banner("YOU WON", color=GREEN, separator='*')
             break
         print_banner("MONSTER TURN", color=RED, separator='#')
-        debuff_effect(game.monster)
-        buff_effect(game.monster)
+        debuff_effect(game.monster, active_debuffs_m)
+        buff_effect(game.monster, active_buffs_m)
         if game.monster.isStunned == False:
             choice_m = randint(1, 2)
             choice_f(game.monster, choice_m)
@@ -57,15 +57,13 @@ while player.health > 0 and monster.health > 0:
     #Error Handling
     except ValueError:
         clean_up()
-        print_banner("Inputted wrong number, dummy", color=RED, separator='#')
+        print_banner("INPUTTED WRONG NUMBER, DUMMY", color=RED, separator='#')
         display_battle_status(game.monster, game.player)
     except TypeError as e :
-        print_banner("The dev butchered the code", color=RED, separator='#')
+        print_banner("DEV BUTCHERED --- EXITING", color=RED, separator='#')
         print(e)
         break
     except IndexError:
         clean_up()
         print_banner("NAUGHTY NAUGHTY - YOU DID SOMETHING ILLEGAL", color=RED, separator='#')
         display_battle_status(game.monster, game.player)
-
-#TODO Monster magic
