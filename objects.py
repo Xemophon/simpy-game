@@ -40,25 +40,25 @@ class Cont():
     
     def spell(self, spell, cont):
         mattack = randint(spell.atpower - 10, spell.atpower)
-        self.attack(cont, True, mattack)
         self.mana -= spell.exhaust
-        print(f"{BLUE}✨ {spell.name} CAST!{RESET} The monster is struck by arcane energy!")
+        print(f"{BLUE}✨ {spell.name} CAST!{RESET} {cont.name} is struck by arcane energy!")
         print(f"  {RED}⚡ Damage Dealt: {mattack}{RESET} | Cost: {BLUE}{spell.exhaust} Mana{RESET}")
+        self.attack(cont, True, mattack)
 
     def debuff(self, inflict):
         self.damage -= inflict.atpower
         print(f"  {GREEN}💥 {self.name} afflicted by {inflict.effect}. Took {round(inflict.atpower)} damage.{RESET}")
 
     def buff(self, rebound):
-        if rebound.effect == "Healing":
+        if rebound.effect == "Heal":
             self.health += rebound.atpower
-            print(f"  {GREEN}🛡️ {self.name} has {rebound.effect}. Healed for {round(rebound.atpower)} this turn.{RESET}")
+            print(f"  {GREEN}💚 {self.name} has {rebound.effect}. Healed for {round(rebound.atpower)} this turn.{RESET}")
         elif rebound.effect == "Remana":
             self.mana += rebound.atpower
-            print(f"  {BLUE}🛡️ {self.name} has {rebound.effect}. Returned {round(rebound.atpower)} mana this turn.{RESET}")
+            print(f"  {BLUE}💙 {self.name} has {rebound.effect}. Returned {round(rebound.atpower)} mana this turn.{RESET}")
         elif rebound.effect == "Strength":
             self.damage += rebound.atpower
-            print(f"  {RED}🛡️ {self.name} has {rebound.effect}. Buffed damage with {round(rebound.atpower)} this turn.{RESET}")
+            print(f"  {RED}⚔️ {self.name} has {rebound.effect}. Buffed damage with {round(rebound.atpower)} this turn.{RESET}")
         elif rebound.effect == "Resistance":
             self.shield += rebound.atpower
             print(f"  {CYAN}🛡️ {self.name} has {rebound.effect}. Buffed shield with {round(rebound.atpower)} this turn.{RESET}")

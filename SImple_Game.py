@@ -16,10 +16,10 @@ while player.health > 0 and monster.health > 0:
             buff_effect(game.player)
             print_banner("ACTION PHASE", color=BLUE, separator='-')
             print(
-                f"1. {RED}⚔️ ATTACK{RESET}     — Deal Damage\n"
-                f"2. {GREEN}🧪 HEAL{RESET}       — Restore HP/Mana\n"
-                f"3. {MAGENTA}🛡️ EQUIP/ITEM{RESET} — Gain Stats/Shield\n"
-                f"4. {ORANGE}🏳️ SURRENDER{RESET}  — End Game"
+                f"1. {RED}⚔️  ATTACK{RESET}     — Deal Damage\n"
+                f"2. {GREEN}🧪  HEAL{RESET}       — Restore HP/Mana\n"
+                f"3. {MAGENTA}🛡️  EQUIP/ITEM{RESET} — Gain Stats/Shield\n"
+                f"4. {ORANGE}🏳️  SURRENDER{RESET}  — End Game"
             )
             print("-" * 45)
             choice_p = int(input("Choose action: "))

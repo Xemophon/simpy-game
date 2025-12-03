@@ -62,7 +62,6 @@ def display_battle_status(monster,player):
     player_extra_stats = f"{GREEN}Damage: {player.damage:<4} | Shield: {CYAN}{player.shield}{RESET} | Assets: {ORANGE}{player.money}{RESET}"
     print(monster_line + f" {monster_extra_stats}")
     print(player_line + f" {player_extra_stats}")
-    
     print(CYAN + "=" * 120 + RESET)
 
 def print_banner(text, color=BLUE, separator="=", length = 45):

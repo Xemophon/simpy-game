@@ -44,14 +44,14 @@ def atks_func(cont):
             for spell in game.spells:
                 if isinstance(spell, temp.Debuff):
                     print(
-                    f"{CYAN}{BOLD}✧ Debuff Spell:{RESET} {MAGENTA}{spell.name}{RESET} "
+                    f"{CYAN}{BOLD}✧ Debuff Spell:{RESET} {CYAN}{spell.name}{RESET} "
                     f"(Use {BLUE}{spell.exhaust}{RESET} Mana) — "
                     f"Hits for {ORANGE}{spell.atpower} Damage{RESET}"
                     f" | Has {CYAN}{spell.effect} Effect for {spell.duration} turns{RESET}"
                         )
                 elif isinstance(spell, temp.Buff):
                     print(
-                    f"{GREEN}{BOLD}✧ Buff Spell:{RESET} {MAGENTA}{spell.name}{RESET} "
+                    f"{GREEN}{BOLD}✧ Buff Spell:{RESET} {GREEN}{spell.name}{RESET} "
                     f"(Use {BLUE}{spell.exhaust}{RESET} Mana) — "
                     f"Has {CYAN}{spell.effect} Effect for {spell.duration} turns{RESET}"
                         )
@@ -64,8 +64,10 @@ def atks_func(cont):
             spellc = int(input("Choose spell: "))
             if isinstance(game.spells[spellc - 1], temp.Debuff):
                 active_debuffs_m.update({(game.spells[spellc - 1]) : (game.spells[spellc - 1]).duration})
+                game.player.mana -= game.spells[spellc - 1].exhaust
             elif isinstance(game.spells[spellc - 1], temp.Buff):
-                active_debuffs_p.update({(game.spells[spellc - 1]) : (game.spells[spellc - 1]).duration})
+                active_buffs_p.update({(game.spells[spellc - 1]) : (game.spells[spellc - 1]).duration})
+                game.player.mana -= game.spells[spellc - 1].exhaust
             else:
                 game.player.spell(game.spells[spellc - 1], game.monster)
     elif cont == game.monster:
@@ -173,7 +175,7 @@ def buff_effect(cont):
                 if element.effect == "Strength":
                     cont.damage -= element.atpower*element.duration
                 if element.effect == "Resistance":
-                    cont.damage -= element.atpower*element.duration       
+                    cont.shield -= element.atpower*element.duration       
                 del active_buffs_m[element]
                 continue 
             cont.buff(element)
@@ -186,7 +188,7 @@ def buff_effect(cont):
                 if element.effect == "Strength":
                     cont.damage -= element.atpower*element.duration
                 if element.effect == "Resistance":
-                    cont.damage -= element.atpower*element.duration       
+                    cont.shield -= element.atpower*element.duration       
                 del active_buffs_p[element]
                 continue 
             cont.buff(element)
