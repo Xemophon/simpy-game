@@ -34,9 +34,13 @@ class Cont():
             cont.health -= attack
             print(f"  {RED}💥 Direct Hit! {cont.name} took {round(attack)} damage.{RESET}")
         else:
-            cont.health -= attack * 0.4
-            cont.shield -= 1
-            print(f"  {CYAN}🛡️ Shield Active! {cont.name} took only {round(attack * 0.4)} damage. Shield: {cont.shield}{RESET}")
+            mitigation_percent = min(0.80, cont.shield * 0.04)
+            damage_multiplier = 1 - mitigation_percent
+            damage_taken = attack * damage_multiplier
+            cont.health -= damage_taken
+            shield_loss = 2 if attack > 30 else 1
+            cont.shield = max(0, cont.shield - shield_loss)
+            print(f"  {CYAN}🛡️ Shield Absorbs {int(mitigation_percent*100)}%! {cont.name} took {round(damage_taken)} dmg. (Shield -{shield_loss}){RESET}")
     
     def spell(self, spell, cont):
         mattack = randint(spell.atpower - 10, spell.atpower)
@@ -55,6 +59,8 @@ class Cont():
     def buff(self, rebound):
         if rebound.effect == "Heal":
             self.health += rebound.atpower
+            if self.health > self.max_health:
+                self.health = self.max_health
             print(f"  {GREEN}💚 {self.name} has {rebound.effect}. Healed for {round(rebound.atpower)} this turn.{RESET}")
         elif rebound.effect == "Remana":
             self.mana += rebound.atpower
@@ -66,10 +72,8 @@ class Cont():
             self.shield += rebound.atpower
             print(f"  {CYAN}🛡️ {self.name} has {rebound.effect}. Buffed shield with {round(rebound.atpower)} this turn.{RESET}")
 
-    def heal(self, potion):
+    def drink(self, potion):
         self.health += potion.heal
-    
-    def remana(self,potion):
         self.mana += potion.remana
     
     def shielding(self, shielding):

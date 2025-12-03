@@ -12,10 +12,10 @@ sleep(2)
 clean_up()
 while player.health > 0 and monster.health > 0:
     try:
+        print_banner(f"BATTLE ROUND {bround}", color=BLUE, separator='=')
+        debuff_effect(game.player)
+        buff_effect(game.player)
         if game.player.isStunned == False:
-            print_banner(f"BATTLE ROUND {bround}", color=BLUE, separator='=')
-            debuff_effect(game.player)
-            buff_effect(game.player)
             print_banner("ACTION PHASE", color=BLUE, separator='-')
             print(
                 f"1. {RED}⚔️  ATTACK{RESET}     — Deal Damage\n"
@@ -28,11 +28,9 @@ while player.health > 0 and monster.health > 0:
             if choice_p not in [1, 2, 3]:
                 print_banner("ACTION: SURRENDERED", color=ORANGE, separator='~')
                 break
-            choice_f(player, choice_p)
+            choice_f(game.player, choice_p)
             sleep(2)
         elif game.player.isStunned == True:
-            debuff_effect(game.player)
-            buff_effect(game.player)
             print_banner("PLAYER STUNNED", color=ORANGE, separator='~')
         if monster.health <= 0:
             print_banner("YOU WON", color=GREEN, separator='*')
@@ -42,17 +40,16 @@ while player.health > 0 and monster.health > 0:
         buff_effect(game.monster)
         if game.monster.isStunned == False:
             choice_m = randint(1, 2)
-            choice_f(monster, choice_m)
+            choice_f(game.monster, choice_m)
         elif game.monster.isStunned == True:
             print_banner("MONSTER STUNNED", color=ORANGE, separator='~')
-            display_battle_status(monster,player)
             sleep(2)
         if player.health <= 0:
             print_banner("YOU LOST", color=RED, separator='*')
             break
         sleep(3)
         clean_up()        
-        display_battle_status(monster,player)
+        display_battle_status(game.monster, game.player)
         sleep(2)
         game.player.refund_money(game.monster)
         bround += 1
@@ -61,7 +58,7 @@ while player.health > 0 and monster.health > 0:
     except ValueError:
         clean_up()
         print_banner("Inputted wrong number, dummy", color=RED, separator='#')
-        display_battle_status(monster,player)
+        display_battle_status(game.monster, game.player)
     except TypeError as e :
         print_banner("The dev butchered the code", color=RED, separator='#')
         print(e)
@@ -69,6 +66,6 @@ while player.health > 0 and monster.health > 0:
     except IndexError:
         clean_up()
         print_banner("NAUGHTY NAUGHTY - YOU DID SOMETHING ILLEGAL", color=RED, separator='#')
-        display_battle_status(monster,player)
+        display_battle_status(game.monster, game.player)
 
 #TODO Monster magic

@@ -124,7 +124,7 @@ def potion_func(cont):
     elif cont == game.monster:
         print_banner("HEAL ACTION", color=GREEN, separator='-')
         potionc = randint(1,3)
-    cont.heal(game.potions[potionc - 1])
+    cont.drink(game.potions[potionc - 1])
     print(f"{GREEN}💚 REGENERATION SUCCESS!{RESET}")
     print(f"  {game.potions[potionc - 1].name} restored:")
     print(f"  ✨ {GREEN}+{game.potions[potionc - 1].heal} Health{RESET} | {BLUE}💧 +{game.potions[potionc - 1].remana} Mana{RESET}")
