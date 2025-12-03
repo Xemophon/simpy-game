@@ -36,43 +36,68 @@ def atks_func(cont):
         print_banner("PLAYER ATTACK", color=GREEN, separator='-')
         print(f"  {RED}1. ⚔️ PHYSICAL ATTACK{RESET}")
         print(f"  {BLUE}2. ✨ MAGICAL SPELL{RESET}")
-        atks = int(input("Select type (1 or 2): "))
+        try:
+            atks = int(input("Select type (1 or 2): "))
+        except ValueError:
+            atks = 1
         if atks == 1 or cont.mana <= 0:
             game.player.attack(game.monster)
         elif atks == 2 and cont.mana > 0:
-            spells_l = global_spells_l
-            for spell in game.spells:
+            for i, spell in enumerate(game.spells):
+                idx = i + 1
                 if isinstance(spell, temp.Debuff):
                     print(
-                    f"{CYAN}{BOLD}✧ Debuff Spell:{RESET} {CYAN}{spell.name}{RESET} "
-                    f"(Use {BLUE}{spell.exhaust}{RESET} Mana) — "
-                    f"Hits for {ORANGE}{spell.atpower} Damage{RESET}"
-                    f" | Has {CYAN}{spell.effect} Effect for {spell.duration} turns{RESET}"
+                    f"{idx}. {MAGENTA}{BOLD}Debuff:{RESET} {MAGENTA}{spell.name}{RESET} "
+                    f"({BLUE}{spell.exhaust} Mana{RESET}) — "
+                    f"{CYAN}{spell.effect} ({spell.duration} turns){RESET}"
                         )
                 elif isinstance(spell, temp.Buff):
                     print(
-                    f"{GREEN}{BOLD}✧ Buff Spell:{RESET} {GREEN}{spell.name}{RESET} "
-                    f"(Use {BLUE}{spell.exhaust}{RESET} Mana) — "
-                    f"Has {CYAN}{spell.effect} Effect for {spell.duration} turns{RESET}"
+                    f"{idx}. {GREEN}{BOLD}Buff:{RESET} {GREEN}{spell.name}{RESET} "
+                    f"({BLUE}{spell.exhaust} Mana{RESET}) — "
+                    f"{CYAN}{spell.effect} ({spell.duration} turns){RESET}"
                         )
                 else:
                     print(
-                    f"{MAGENTA}{BOLD}✧ Arcane Spell:{RESET} {MAGENTA}{spell.name}{RESET} "
-                    f"(Use {BLUE}{spell.exhaust}{RESET} Mana) — "
-                    f"Hits for {ORANGE}{spell.atpower} Damage{RESET}"
+                    f"{idx}. {CYAN}{BOLD}Arcane:{RESET} {CYAN}{spell.name}{RESET} "
+                    f"({BLUE}{spell.exhaust} Mana{RESET}) — "
+                    f"Hits for {ORANGE}{spell.atpower} Dmg{RESET}"
                         )
             spellc = int(input("Choose spell: "))
-            if isinstance(game.spells[spellc - 1], temp.Debuff):
-                active_debuffs_m.update({(game.spells[spellc - 1]) : (game.spells[spellc - 1]).duration})
-                game.player.mana -= game.spells[spellc - 1].exhaust
-            elif isinstance(game.spells[spellc - 1], temp.Buff):
-                active_buffs_p.update({(game.spells[spellc - 1]) : (game.spells[spellc - 1]).duration})
-                game.player.mana -= game.spells[spellc - 1].exhaust
+            selected_spell = game.spells[spellc - 1]
+            if cont.mana < selected_spell.exhaust:
+                print(f"{RED}Not enough Mana! Cast failed.{RESET}")
+                return
+            if isinstance(selected_spell, temp.Debuff):
+                cont.mana -= selected_spell.exhaust
+                active_debuffs_m.update({selected_spell : selected_spell.duration})
+                print(f"{GREEN}Cast Successful! {selected_spell.name} applied to Monster.{RESET}")
+            elif isinstance(selected_spell, temp.Buff):
+                cont.mana -= selected_spell.exhaust
+                active_buffs_p.update({selected_spell : selected_spell.duration})
+                print(f"{GREEN}Cast Successful! {selected_spell.name} applied to Player.{RESET}")
             else:
-                game.player.spell(game.spells[spellc - 1], game.monster)
+                game.player.spell(selected_spell, game.monster)
     elif cont == game.monster:
-        print_banner("MONSTER SLASH", color=RED, separator='-')
-        game.monster.attack(game.player)
+        magic_chance = randint(1, 10)
+        spell_choice = game.spells[randint(0, len(game.spells) - 1)]
+        if magic_chance > 7 and cont.mana >= spell_choice.exhaust:
+            print_banner("MONSTER CASTING", color=MAGENTA, separator='*')
+            if isinstance(spell_choice, temp.Buff):
+                cont.mana -= spell_choice.exhaust
+                active_buffs_m.update({spell_choice : spell_choice.duration})
+                print(f"{RED}The Monster casts {MAGENTA}{spell_choice.name}{RED}!{RESET}")
+                print(f"  {CYAN}Effect: {spell_choice.effect} applied to self for {spell_choice.duration} turns.{RESET}")
+            elif isinstance(spell_choice, temp.Debuff):
+                cont.mana -= spell_choice.exhaust
+                active_debuffs_p.update({spell_choice : spell_choice.duration})
+                print(f"{RED}The Monster casts {MAGENTA}{spell_choice.name}{RED}!{RESET}")
+                print(f"  {CYAN}Effect: {spell_choice.effect} cast on Player for {spell_choice.duration} turns.{RESET}")
+            else:
+                cont.spell(spell_choice, game.player)
+        else:
+            print_banner("MONSTER SLASH", color=RED, separator='-')
+            game.monster.attack(game.player)
 
 def potion_func(cont):
     potion_l = global_potions
@@ -144,12 +169,7 @@ def debuff_effect(cont):
                 if element.effect == "Stun":
                     cont.isStunned = False                    
                 del active_debuffs_m[element]
-                continue 
-
-            if element.effect == "Poison":
-                cont.debuff(element)
-            elif element.effect == "Stun":
-                cont.isStunned = True
+                continue
 
     elif active_debuffs_p and cont == game.player:
         for element in list(active_debuffs_p.keys()):
@@ -160,11 +180,7 @@ def debuff_effect(cont):
                     cont.isStunned = False                    
                 del active_debuffs_p[element]
                 continue 
-
-            if element.effect == "Poison":
-                cont.debuff(element)
-            elif element.effect == "Stun":
-                cont.isStunned = True
+            cont.debuff(element)
 
 def buff_effect(cont):
     if active_buffs_m and cont == game.monster:

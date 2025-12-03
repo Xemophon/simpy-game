@@ -8,11 +8,13 @@ from items import *
 
 #Game Loop
 print_splash_screen()
+sleep(2)
+clean_up()
 while player.health > 0 and monster.health > 0:
     try:
         if game.player.isStunned == False:
             print_banner(f"BATTLE ROUND {bround}", color=BLUE, separator='=')
-            #TODO debuff_effect(game.player)
+            debuff_effect(game.player)
             buff_effect(game.player)
             print_banner("ACTION PHASE", color=BLUE, separator='-')
             print(
@@ -29,7 +31,7 @@ while player.health > 0 and monster.health > 0:
             choice_f(player, choice_p)
             sleep(2)
         elif game.player.isStunned == True:
-            #TODO debuff_effect(game.player)
+            debuff_effect(game.player)
             buff_effect(game.player)
             print_banner("PLAYER STUNNED", color=ORANGE, separator='~')
         if monster.health <= 0:
@@ -37,10 +39,10 @@ while player.health > 0 and monster.health > 0:
             break
         print_banner("MONSTER TURN", color=RED, separator='#')
         debuff_effect(game.monster)
+        buff_effect(game.monster)
         if game.monster.isStunned == False:
             choice_m = randint(1, 2)
             choice_f(monster, choice_m)
-            #TODO buff_effect(game.monster)
         elif game.monster.isStunned == True:
             print_banner("MONSTER STUNNED", color=ORANGE, separator='~')
             display_battle_status(monster,player)
@@ -48,7 +50,7 @@ while player.health > 0 and monster.health > 0:
         if player.health <= 0:
             print_banner("YOU LOST", color=RED, separator='*')
             break
-        sleep(2)
+        sleep(3)
         clean_up()        
         display_battle_status(monster,player)
         sleep(2)
@@ -58,7 +60,7 @@ while player.health > 0 and monster.health > 0:
     #Error Handling
     except ValueError:
         clean_up()
-        print_banner("Inputted wrong number, retard", color=RED, separator='#')
+        print_banner("Inputted wrong number, dummy", color=RED, separator='#')
         display_battle_status(monster,player)
     except TypeError as e :
         print_banner("The dev butchered the code", color=RED, separator='#')

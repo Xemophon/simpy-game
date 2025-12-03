@@ -46,8 +46,11 @@ class Cont():
         self.attack(cont, True, mattack)
 
     def debuff(self, inflict):
-        self.damage -= inflict.atpower
-        print(f"  {GREEN}💥 {self.name} afflicted by {inflict.effect}. Took {round(inflict.atpower)} damage.{RESET}")
+        if inflict.effect == "Poison":
+            self.health -= inflict.atpower
+            print(f"  {GREEN}💥 {self.name} afflicted by {inflict.effect}. Took {round(inflict.atpower)} damage.{RESET}")
+        elif inflict.effect == "Stun":
+            self.isStunned = True
 
     def buff(self, rebound):
         if rebound.effect == "Heal":
