@@ -1,27 +1,38 @@
 # Simpy Game - Console RPG
 
-A turn-based, text-adventure RPG built in Python. Battle monsters, manage your health and mana, and utilize a variety of spells and items to survive.
+A turn-based, text-adventure RPG built in Python. Battle smart monsters, manage your economy, and utilize a complex system of spells, buffs, and degrading armor to survive.
 
-## 🎮 Features
+## 🎮 Key Features
 
-* **Turn-Based Combat**: Classic RPG battle system with Player vs. Monster mechanics.
-* **Resource Management**: Manage **Health** and **Mana** carefully. Use potions to regenerate resources during battle.
-* **Magic System**: Cast offensive spells like "Blast" and "Icicle" or inflict status effects like "Poison" and "Stun".
-* **Inventory System**:
-    * **Potions**: Restore Health and Mana (e.g., "Balanced Rejuvenation", "FulHeal").
-    * **Equipment**: Equip weapons and armor to boost your Damage or Shield stats dynamically during the fight.
-* **Rich Console UI**: Features color-coded text for damage types, healing, and alerts, along with ASCII art for monsters and UI banners.
+### ⚔️ Tactical Combat
+* **Smart Enemy AI**: The monster isn't just a punching bag anymore. It can **cast spells**, **buff itself**, and **stun you**.
+* **Advanced Shield System**: Armor is no longer a flat block. Your shield provides **% based damage mitigation** (4% per point, capped at 80%). However, shield integrity **degrades** with every hit, forcing you to time your defenses carefully.
+* **Status Effects**: Master the flow of battle with **Stuns** (skip turns), **Poison** (DoT), and **Buffs** (Strength/Resistance).
+
+### 💰 Economy & Assets
+* **Earn & Spend**: You are no longer given everything for free. Defeating monsters earns you **Money** (Assets).
+* **Shop System**: Potions and Equipment now have a **Price**. You must manage your finances to afford that life-saving "FulHeal" or "GodSword" mid-battle.
+
+### 🪄 Expanded Magic
+* **Offensive Spells**: "Blast", "Icicle", "Meteo Strike".
+* **Strategic Buffs**: 
+    * *Berserker Fury* (Damage Up)
+    * *Earth's Protection* (Shield Regen)
+    * *Bard Healing* (Health Regen)
+    * *Mana Extraction* (Mana Regen)
+* **Debuffs**: "Mirage" (Stun), "Deadly Mist" (Poison).
 
 ## 📂 Project Structure
 
-The game is modularized into four main Python files:
+The project is split into five modules for better organization:
 
-* **`SImple_Game.py`**: The main entry point. Contains the primary game loop, turn handling, and win/loss conditions.
-* **`actions.py`**: Handles core game logic, including combat calculations, inventory management, UI rendering, and user input handling.
-* **`objects.py`**: Defines the base classes for the game entities (`Player`, `Monster`) and item templates (`Weapon`, `Potion`, `Spell`).
-* **`items.py`**: Acts as the database for the game, initializing specific instances of items, spells, and the player/monster stats.
+* **`SImple_Game.py`**: The entry point. Runs the main game loop, handles turn progression, and checks win/loss conditions.
+* **`actions.py`**: Contains the core logic for Player and Monster turns, including spell casting, AI decisions, and handling buff/debuff timers.
+* **`objects.py`**: Defines the game classes (`Player`, `Monster`) and mechanic logic (Damage calculation, Shield degradation, Stat updates).
+* **`items.py`**: The "Database" file. Initializes all items, spells, monsters, and player stats.
+* **`misc_actions.py`**: Handles UI elements like health bars, banners, screen clearing, and ASCII art rendering.
 
-## 🚀 How to Run
+## 🚀 How to Play
 
 ### Prerequisites
 * Python 3.x
@@ -36,7 +47,7 @@ The game is modularized into four main Python files:
     cd simpy-game
     ```
 
-### Playing the Game
-Run the main script to start the battle:
+### Running the Game
+Execute the main script:
 ```bash
 python SImple_Game.py
