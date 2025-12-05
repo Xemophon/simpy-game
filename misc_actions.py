@@ -25,9 +25,13 @@ MONSTER_ART = r"""
 def clean_up():
     system('cls')
 
+def show_stats(self):
+    print_banner(f"SELECTED {self.role}", color=RED, separator='/')
+    print_banner(f"Health: {self.max_health}, Mana: {self.max_mana}, Damage:{self.damage}, Shield:{self.shield}", color=GREEN, separator='/')
+
 def _generate_stat_line(cont):
     health_coef = cont.health / cont.max_health
-    mana_coef = cont.mana / 200
+    mana_coef = cont.mana / cont.max_mana
     bar_length = 20
     if cont == game.player:
         pl_label = f"{GREEN}Player{RESET} " 
@@ -50,7 +54,7 @@ def _generate_stat_line(cont):
     mana_bar_empty = '░' * (bar_length - int(bar_length * mana_coef))
     mana_part = (
         f"| Mana: {mana_bar_filled}{mana_bar_empty} "
-        f"{int(cont.mana):>3}/200"
+        f"{int(cont.mana):>3}/{cont.max_mana}"
     )
     return health_part + " " + mana_part
 

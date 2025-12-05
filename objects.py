@@ -12,9 +12,10 @@ RESET = '\033[0m'
 
 #Controllable template
 class Cont():
-    def __init__(self, name, max_health, health, damage, shield, mana, isStunned = False, money = 150):
+    def __init__(self, name, max_health, max_mana, health, damage, shield, mana, isStunned = False, money = 150):
          self.name = name
          self.max_health = max_health
+         self.max_mana = max_mana
          self.health = health
          self.damage = damage
          self.shield = shield
@@ -66,8 +67,8 @@ class Cont():
                 print(f"  {GREEN}💚 {self.name} has {rebound.effect}. Healed for {round(rebound.atpower)} this turn.{RESET}")
         elif rebound.effect == "Remana":
             self.mana += rebound.atpower
-            if self.mana > 200:
-                self.mana = 200
+            if self.mana > self.max_mana:
+                self.mana = self.max_mana
                 print(f"  {BLUE}💙 {self.name} has {rebound.effect}. Returned to max mana this turn.{RESET}")
             else:
                 print(f"  {BLUE}💙 {self.name} has {rebound.effect}. Returned {round(rebound.atpower)} mana this turn.{RESET}")
@@ -90,6 +91,12 @@ class Cont():
             self.damage += itemj.power
         elif itemj.armor > 0:
             self.shield += itemj.armor
+
+class Player(Cont):
+    def __init__(self, role, name, max_health, max_mana, health, damage, shield, mana, isStunned=False, money=150):
+        super().__init__(name, max_health, max_mana, health, damage, shield, mana, isStunned, money)
+        self.role = role
+        
 
 #Item templates
 class Item():

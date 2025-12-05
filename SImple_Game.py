@@ -8,9 +8,24 @@ from items import *
 
 #Game Loop
 print_splash_screen()
+selected = 0
+while selected == 0:
+    try:
+        game.monster = game.boss
+        print_banner("SELECT CLASS", color=RED, separator='/')
+        ind = 0
+        for clas in game.classes:
+            ind += 1
+            print(f"{ind}. {clas.role}")
+        role_choice = int(input("Choice: "))
+        game.player = game.classes[role_choice - 1]
+        selected = 1
+        show_stats(game.player)
+    except Exception:
+        print_banner("CHOOSE PLEASE", color=CYAN, separator='/')
 sleep(2)
 clean_up()
-while player.health > 0 and monster.health > 0:
+while game.player.health > 0 and game.monster.health > 0:
     try:
         print_banner(f"BATTLE ROUND {bround}", color=BLUE, separator='=')
         debuff_effect(game.player, active_debuffs_p)
@@ -32,7 +47,7 @@ while player.health > 0 and monster.health > 0:
             sleep(2)
         elif game.player.isStunned == True:
             print_banner("PLAYER STUNNED", color=ORANGE, separator='~')
-        if monster.health <= 0:
+        if game.monster.health <= 0:
             print_banner("YOU WON", color=GREEN, separator='*')
             break
         print_banner("MONSTER TURN", color=RED, separator='#')
@@ -44,7 +59,7 @@ while player.health > 0 and monster.health > 0:
         elif game.monster.isStunned == True:
             print_banner("MONSTER STUNNED", color=ORANGE, separator='~')
             sleep(2)
-        if player.health <= 0:
+        if game.player.health <= 0:
             print_banner("YOU LOST", color=RED, separator='*')
             break
         sleep(3)

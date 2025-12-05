@@ -143,6 +143,10 @@ def item_func(cont):
     ind = 0
     for item in items_dic.keys():
         print(f"{ORANGE}{BOLD}✧ Item :{RESET} {ORANGE}{item}{RESET} | {items_dic[item]} left | Costs {game.items_u[ind].price}")
+        if isinstance(game.items_u[ind], temp.Weapon):
+            print(f"     {RED}└── ⚔️  Power: {game.items_u[ind].power}{RESET}")
+        elif isinstance(game.items_u[ind], temp.Armor):
+            print(f"     {CYAN}└── 🛡️  Block: {game.items_u[ind].armor}{RESET}")
         ind += 1
     itemsc = int(input("Choose item with number: "))
     if cont.money >= game.items_u[itemsc - 1].price:
