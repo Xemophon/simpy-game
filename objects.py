@@ -5,14 +5,14 @@ RED = '\033[91m'
 GREEN = '\033[92m'
 ORANGE = '\033[93m'
 BLUE = '\033[94m'
-MAGENTA = '\033[95m'
+MAGENTA = '\033[95m' 
 CYAN = '\033[96m'
 BOLD = '\033[1m'
 RESET = '\033[0m'
 
 #Controllable template
 class Cont():
-    def __init__(self, name, max_health, max_mana, health, damage, shield, mana, isStunned = False, money = 150, crit_chance=15, dodge_chance=10):
+    def __init__(self, name, max_health, max_mana, health, damage, shield, mana, isStunned = False, money = 150):
          self.name = name
          self.max_health = max_health
          self.max_mana = max_mana
@@ -22,35 +22,18 @@ class Cont():
          self.mana = mana
          self.isStunned = isStunned
          self.money = money
-         self.crit_chance = crit_chance
-         self.dodge_chance = dodge_chance
 
     def refund_money(self, cont):
         self.money += round((cont.max_health - cont.health) / 2)
 
     def attack(self, cont, isSpell = False, mattack = 0):
-        # Dodge Check
-        if randint(1, 100) <= cont.dodge_chance:
-            print(f"  {ORANGE}💨 {cont.name} DODGED the attack!{RESET}")
-            return
-
-        isCrit = False
         if isSpell == False:
             attack = randint(self.damage-5, self.damage)
-            # Crit Check (Physical only)
-            if randint(1, 100) <= self.crit_chance:
-                isCrit = True
-                attack = int(attack * 1.5)
         else:
             attack = mattack
-
-        if isCrit:
-            print(f"  {RED}💥 CRITICAL HIT! {int(attack)} Damage!{RESET}")
-
         if cont.shield == 0 or isSpell == True:
             cont.health -= attack
-            if not isCrit: # Don't print "Direct Hit" again if we already printed Crit
-                print(f"  {RED}💥 Direct Hit! {cont.name} took {round(attack)} damage.{RESET}")
+            print(f"  {RED}💥 Direct Hit! {cont.name} took {round(attack)} damage.{RESET}")
         else:
             mitigation_percent = min(0.80, cont.shield * 0.04)
             damage_multiplier = 1 - mitigation_percent
@@ -59,7 +42,7 @@ class Cont():
             shield_loss = 2 if attack > 30 else 1
             cont.shield = max(0, cont.shield - shield_loss)
             print(f"  {CYAN}🛡️ Shield Absorbs {int(mitigation_percent*100)}%! {cont.name} took {round(damage_taken)} dmg. (Shield -{shield_loss}){RESET}")
-
+    
     def spell(self, spell, cont):
         mattack = randint(spell.atpower - 10, spell.atpower)
         self.mana -= spell.exhaust
@@ -99,10 +82,10 @@ class Cont():
     def drink(self, potion):
         self.health += potion.heal
         self.mana += potion.remana
-
+    
     def shielding(self, shielding):
         self.shield += shielding.armor
-
+    
     def equip(self, itemj):
         if itemj.power > 0:
             self.damage += itemj.power
@@ -110,10 +93,10 @@ class Cont():
             self.shield += itemj.armor
 
 class Player(Cont):
-    def __init__(self, role, name, max_health, max_mana, health, damage, shield, mana, isStunned=False, money=150, crit_chance=15, dodge_chance=10):
-        super().__init__(name, max_health, max_mana, health, damage, shield, mana, isStunned, money, crit_chance, dodge_chance)
+    def __init__(self, role, name, max_health, max_mana, health, damage, shield, mana, isStunned=False, money=150):
+        super().__init__(name, max_health, max_mana, health, damage, shield, mana, isStunned, money)
         self.role = role
-
+        
 
 #Item templates
 class Item():

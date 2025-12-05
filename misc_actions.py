@@ -22,13 +22,8 @@ MONSTER_ART = r"""
   |________|         
 """
 
-from os import name as os_name
-
 def clean_up():
-    if os_name == 'nt':
-        system('cls')
-    else:
-        system('clear')
+    system('cls')
 
 def show_stats(self):
     print_banner(f"SELECTED {self.role}", color=RED, separator='/')

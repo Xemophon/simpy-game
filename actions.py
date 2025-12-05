@@ -63,13 +63,8 @@ def atks_func(cont):
                     f"({BLUE}{spell.exhaust} Mana{RESET}) — "
                     f"Hits for {ORANGE}{spell.atpower} Dmg{RESET}"
                         )
-            try:
-                spellc = int(input("Choose spell: "))
-                selected_spell = game.spells[spellc - 1]
-            except (ValueError, IndexError):
-                 print(f"{RED}Invalid spell selection! Action cancelled.{RESET}")
-                 return
-
+            spellc = int(input("Choose spell: "))
+            selected_spell = game.spells[spellc - 1]
             if cont.mana < selected_spell.exhaust:
                 print(f"{RED}Not enough Mana! Cast failed.{RESET}")
                 return
@@ -118,35 +113,17 @@ def potion_func(cont):
                 )
             ind += 1
         potionc = int(input("Choose potion with number: "))
-    try:
-        current_potion = game.potions[potionc - 1]
-    except IndexError:
-        print(f"{RED}Invalid potion selection.{RESET}")
-        return
-
-    if cont.money >= current_potion.price:
+        if cont.money >= (game.potions[potionc - 1]).price:
             print_banner("HEAL ACTION", color=GREEN, separator='-')
-        current_potion.quantity -= 1
-        potion_l[current_potion.name] -= 1
-        cont.money -= current_potion.price
+            (game.potions[potionc - 1]).quantity -= 1
+            potion_l[(game.potions[potionc - 1]).name] -= 1
+            cont.money -= (game.potions[potionc - 1]).price
         else:
             print("Not enough assets")
             raise IndexError
     elif cont == game.monster:
         print_banner("HEAL ACTION", color=GREEN, separator='-')
-        # Monster just drinks a random potion effect, doesn't consume shop inventory
-        # Use a virtual potion
-        potionc = randint(0, len(game.potions) - 1)
-        virtual_potion = game.potions[potionc]
-        cont.drink(virtual_potion)
-        print(f"{GREEN}💚 REGENERATION SUCCESS!{RESET}")
-        print(f"  {virtual_potion.name} restored:")
-        print(f"  ✨ {GREEN}+{virtual_potion.heal} Health{RESET} | {BLUE}💧 +{virtual_potion.remana} Mana{RESET}")
-        if cont.health >= cont.max_health:
-            cont.health = cont.max_health
-            print(f"{ORANGE}🛡️ Health already MAXED ({int(cont.max_health)} HP)! Regeneration capped.{RESET}")
-        return
-
+        potionc = randint(1,3)
     cont.drink(game.potions[potionc - 1])
     print(f"{GREEN}💚 REGENERATION SUCCESS!{RESET}")
     print(f"  {game.potions[potionc - 1].name} restored:")
@@ -171,18 +148,12 @@ def item_func(cont):
         elif isinstance(game.items_u[ind], temp.Armor):
             print(f"     {CYAN}└── 🛡️  Block: {game.items_u[ind].armor}{RESET}")
         ind += 1
-    try:
-        itemsc = int(input("Choose item with number: "))
-        selected_item = game.items_u[itemsc - 1]
-    except (ValueError, IndexError):
-        print(f"{RED}Invalid item selection.{RESET}")
-        return
-
-    if cont.money >= selected_item.price:
-        cont.money -= selected_item.price
-        cont.equip(selected_item)
-        selected_item.quantity -= 1
-        items_dic[selected_item.name] -= 1
+    itemsc = int(input("Choose item with number: "))
+    if cont.money >= game.items_u[itemsc - 1].price:
+        cont.money -= game.items_u[itemsc - 1].price
+        cont.equip(game.items_u[itemsc - 1])
+        (game.items_u[itemsc - 1]).quantity -= 1
+        items_dic[(game.items_u[itemsc - 1]).name] -= 1
         print(f"{GREEN}Equipped!{RESET}")
         for name in items_dic.keys():
             if items_dic[name] == 0:

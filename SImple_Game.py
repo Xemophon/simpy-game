@@ -17,16 +17,12 @@ while selected == 0:
         for clas in game.classes:
             ind += 1
             print(f"{ind}. {clas.role}")
-        try:
-            role_choice = int(input("Choice: "))
-            game.player = game.classes[role_choice - 1]
-            selected = 1
-            show_stats(game.player)
-        except (ValueError, IndexError):
-            print_banner("CHOOSE PLEASE", color=CYAN, separator='/')
-    except Exception as e:
-        print_banner("ERROR OCCURRED", color=RED, separator='/')
-        print(e)
+        role_choice = int(input("Choice: "))
+        game.player = game.classes[role_choice - 1]
+        selected = 1
+        show_stats(game.player)
+    except Exception:
+        print_banner("CHOOSE PLEASE", color=CYAN, separator='/')
 sleep(2)
 clean_up()
 while game.player.health > 0 and game.monster.health > 0:
