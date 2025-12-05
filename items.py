@@ -5,14 +5,17 @@ from objects import *
 player = Cont("Faruko", 100, 100, 20, 10, 200)
 monster = Cont("Govnior", 150, 150, 30, 10, 200, False, float('inf'))
 
+#Potions
 potion1 = Potions("Balanced Rejuvenation", 7, 10, 10, 5)
 potion2 = Potions("FulHeal", 15, 25, 0, 3)
 potion3 = Potions("Remana", 15, 0, 25, 3)
 
+#Items
 sword = Weapon("GodSword", 60, 20, 2)
 shield = Armor("Shield of Paladin", 25, 8, 1)
 armor = Armor("Yielding Armor", 40, 10, 4 )
 
+#Spells
 fblas = Spell("Blast", 40, 30)
 iblas = Spell("Icicle", 25, 10)
 maxdop = Spell("Meteo Strike", 100, 150)
@@ -30,5 +33,6 @@ items_u = [shield, armor, sword]
 
 spells = [fblas, iblas, maxdop, poison, stun_1, barding, remaning, berserk, protec]
 
+#Round and statuses
 bround = 1
 stunned = False

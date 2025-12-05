@@ -61,10 +61,16 @@ class Cont():
             self.health += rebound.atpower
             if self.health > self.max_health:
                 self.health = self.max_health
-            print(f"  {GREEN}💚 {self.name} has {rebound.effect}. Healed for {round(rebound.atpower)} this turn.{RESET}")
+                print(f"  {GREEN}💚 {self.name} has {rebound.effect}. Healed to max health this turn.{RESET}")
+            else:
+                print(f"  {GREEN}💚 {self.name} has {rebound.effect}. Healed for {round(rebound.atpower)} this turn.{RESET}")
         elif rebound.effect == "Remana":
             self.mana += rebound.atpower
-            print(f"  {BLUE}💙 {self.name} has {rebound.effect}. Returned {round(rebound.atpower)} mana this turn.{RESET}")
+            if self.mana > 200:
+                self.mana = 200
+                print(f"  {BLUE}💙 {self.name} has {rebound.effect}. Returned to max mana this turn.{RESET}")
+            else:
+                print(f"  {BLUE}💙 {self.name} has {rebound.effect}. Returned {round(rebound.atpower)} mana this turn.{RESET}")
         elif rebound.effect == "Strength":
             self.damage += rebound.atpower
             print(f"  {RED}⚔️ {self.name} has {rebound.effect}. Buffed damage with {round(rebound.atpower)} this turn.{RESET}")
