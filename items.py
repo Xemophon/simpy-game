@@ -2,10 +2,12 @@
 from objects import *
 
 #Classes
-warrior = Player("Warrior", "Faruko", 200, 50, 200, 35, 15, 50)
-mage = Player("Mage", "Kaputio", 100, 200, 100, 20, 10, 200)
+warrior = Player("Warrior", "Faruko", 200, 50, 200, 35, 15, 50, 0.3, 0.2)
+mage = Player("Mage", "Kaputio", 120, 200, 120, 20, 10, 200, 0.2, 0.1)
+rogue = Player("Rogue", "Harpun", 90, 100, 90, 25, 8, 100, 0.6, 0.3)
 
-boss = Cont("Govnior", 150, 200, 150, 30, 10, 200, False, float('inf'))
+#Monster Types
+boss = Monster(None, "Boss", "Govnior", 150, 200, 150, 30, 10, 200, 0.4, 0.1, False, float('inf'))
 
 dagger = Weapon("Rusty Dagger", 15, 5, 1)
 club = Weapon("Wooden Club", 10, 3, 1)
@@ -54,7 +56,7 @@ berserk = Buff("Berserker Fury", 40, 80, "Strength", 2)
 protec = Buff("Earth's Protection", 50, 80, "Resistance", 2)
 
 #Assigning Inventories
-classes = [warrior, mage]
+classes = [warrior, mage, rogue]
 
 items_u = [dagger, club, axe, spear, excalibur, mjolnir, leather, buckler, chainmail, kite_shield, dragon, aegis]
 

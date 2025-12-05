@@ -131,6 +131,9 @@ def potion_func(cont):
     if cont.health >= cont.max_health:
         cont.health = cont.max_health
         print(f"{ORANGE}🛡️ Health already MAXED ({int(cont.max_health)} HP)! Regeneration capped.{RESET}")
+    if cont.mana >= cont.max_mana:
+        cont.mana = cont.max_mana
+        print(f"{ORANGE}🛡️ Mana already MAXED ({int(cont.max_mana)} MANA)! Remana capped.{RESET}")
     for name in potion_l.keys():
         if potion_l[name] == 0:
             potion_l.pop(name)

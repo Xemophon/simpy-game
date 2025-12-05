@@ -12,7 +12,7 @@ RESET = '\033[0m'
 
 #Controllable template
 class Cont():
-    def __init__(self, name, max_health, max_mana, health, damage, shield, mana, isStunned = False, money = 150):
+    def __init__(self, name, max_health, max_mana, health, damage, shield, mana, crit_chance, dodge_chance, isStunned = False, money = 150):
          self.name = name
          self.max_health = max_health
          self.max_mana = max_mana
@@ -20,6 +20,8 @@ class Cont():
          self.damage = damage
          self.shield = shield
          self.mana = mana
+         self.crit_chance = crit_chance
+         self.dodge_chance = dodge_chance
          self.isStunned = isStunned
          self.money = money
 
@@ -27,21 +29,28 @@ class Cont():
         self.money += round((cont.max_health - cont.health) / 2)
 
     def attack(self, cont, isSpell = False, mattack = 0):
-        if isSpell == False:
-            attack = randint(self.damage-5, self.damage)
+        roll_chance = randint(0, 100)
+        if roll_chance > self.dodge_chance * 100:
+            if isSpell == False:
+                attack = randint(round(self.damage * (1 - self.crit_chance)), self.damage)
+            else:
+                attack = mattack
+            if cont.shield == 0 or isSpell == True:
+                if self.damage == attack:
+                    print(f"  {RED}💥💥 Critical Hit! {cont.name} took {attack} damage.{RESET}")
+                else:
+                    print(f"  {RED}💥 Direct Hit! {cont.name} took {round(attack)} damage.{RESET}")
+                cont.health -= attack
+            else:
+                mitigation_percent = min(0.80, cont.shield * 0.04)
+                damage_multiplier = 1 - mitigation_percent
+                damage_taken = attack * damage_multiplier
+                cont.health -= damage_taken
+                shield_loss = 2 if attack > 30 else 1
+                cont.shield = max(0, cont.shield - shield_loss)
+                print(f"  {CYAN}🛡️ Shield Absorbs {int(mitigation_percent*100)}%! {cont.name} took {round(damage_taken)} dmg. (Shield -{shield_loss}){RESET}")
         else:
-            attack = mattack
-        if cont.shield == 0 or isSpell == True:
-            cont.health -= attack
-            print(f"  {RED}💥 Direct Hit! {cont.name} took {round(attack)} damage.{RESET}")
-        else:
-            mitigation_percent = min(0.80, cont.shield * 0.04)
-            damage_multiplier = 1 - mitigation_percent
-            damage_taken = attack * damage_multiplier
-            cont.health -= damage_taken
-            shield_loss = 2 if attack > 30 else 1
-            cont.shield = max(0, cont.shield - shield_loss)
-            print(f"  {CYAN}🛡️ Shield Absorbs {int(mitigation_percent*100)}%! {cont.name} took {round(damage_taken)} dmg. (Shield -{shield_loss}){RESET}")
+            print(f"  {CYAN}🛡️ {cont.name} evaded the attack.{RESET}")
     
     def spell(self, spell, cont):
         mattack = randint(spell.atpower - 10, spell.atpower)
@@ -93,10 +102,16 @@ class Cont():
             self.shield += itemj.armor
 
 class Player(Cont):
-    def __init__(self, role, name, max_health, max_mana, health, damage, shield, mana, isStunned=False, money=150):
-        super().__init__(name, max_health, max_mana, health, damage, shield, mana, isStunned, money)
+    def __init__(self, role, name, max_health, max_mana, health, damage, shield, mana, crit_chance, dodge_chance, isStunned = False, money = 150):
+        super().__init__(name, max_health, max_mana, health, damage, shield, mana, crit_chance, dodge_chance, isStunned, money)
         self.role = role
         
+
+class Monster(Cont):
+    def __init__(self, weakness, role, name, max_health, max_mana, health, damage, shield, mana, crit_chance, dodge_chance, isStunned = False, money = 150):
+        super().__init__(name, max_health, max_mana, health, damage, shield, mana, crit_chance, dodge_chance, isStunned, money)
+        self.role = role
+        self.weakness = weakness
 
 #Item templates
 class Item():
