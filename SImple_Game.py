@@ -49,6 +49,7 @@ while game.player.health > 0 and game.monster.health > 0:
             print_banner("PLAYER STUNNED", color=ORANGE, separator='~')
         if game.monster.health <= 0:
             print_banner("YOU WON", color=GREEN, separator='*')
+            sleep(3)
             break
         print_banner("MONSTER TURN", color=RED, separator='#')
         debuff_effect(game.monster, active_debuffs_m)
@@ -61,6 +62,7 @@ while game.player.health > 0 and game.monster.health > 0:
             sleep(2)
         if game.player.health <= 0:
             print_banner("YOU LOST", color=RED, separator='*')
+            sleep(3)
             break
         sleep(3)
         clean_up()        
