@@ -31,12 +31,17 @@ class Cont():
     def attack(self, cont, isSpell = False, magic_attack = 0):
         roll_chance = randint(0, 100)
         if roll_chance > self.dodge_chance * 100:
+            is_crit = False
             if isSpell == False:
-                attack = randint(round(self.damage * (1 - self.crit_chance)), self.damage)
+                if randint(1, 100) <= self.crit_chance * 100:
+                    is_crit = True
+                    attack = int(self.damage * 1.5)
+                else:
+                    attack = randint(int(self.damage * 0.8), self.damage)
             else:
                 attack = magic_attack
             if cont.shield == 0 or isSpell == True:
-                if self.damage == attack:
+                if is_crit:
                     print(f"  {RED}💥💥 Critical Hit! {cont.name} took {attack} damage.{RESET}")
                 else:
                     print(f"  {RED}💥 Direct Hit! {cont.name} took {round(attack)} damage.{RESET}")
@@ -111,9 +116,6 @@ class Player(Cont):
     def __init__(self, role, name, max_health, max_mana, health, damage, shield, mana, crit_chance, dodge_chance, isStunned = False, money = 150):
         super().__init__(name, max_health, max_mana, health, damage, shield, mana, crit_chance, dodge_chance, isStunned, money)
         self.role = role
-        
-    def __copy__(self):
-        pass
 
 class Monster(Cont):
     def __init__(self, weakness, role, name, max_health, max_mana, health, damage, shield, mana, crit_chance, dodge_chance, isStunned = False, money = 150):

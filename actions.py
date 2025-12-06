@@ -134,7 +134,7 @@ def potion_func(cont):
     if cont.mana >= cont.max_mana:
         cont.mana = cont.max_mana
         print(f"{ORANGE}🛡️ Mana already MAXED ({int(cont.max_mana)} MANA)! Remana capped.{RESET}")
-    for name in potion_l.keys():
+    for name in list(potion_l.keys()):
         if potion_l[name] == 0:
             potion_l.pop(name)
             game.potions.pop(potionc - 1)
@@ -158,7 +158,7 @@ def item_func(cont):
         (game.items_u[itemsc - 1]).quantity -= 1
         items_dic[(game.items_u[itemsc - 1]).name] -= 1
         print(f"{GREEN}Equipped!{RESET}")
-        for name in items_dic.keys():
+        for name in list(items_dic.keys()):
             if items_dic[name] == 0:
                 items_dic.pop(name)
                 game.items_u.pop(itemsc - 1)
