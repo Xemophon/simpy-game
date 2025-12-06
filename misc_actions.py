@@ -12,15 +12,7 @@ MAGENTA = '\033[95m'
 CYAN = '\033[96m'
 BOLD = '\033[1m'
 RESET = '\033[0m'
-MONSTER_ART = r"""
-    __/\__
-   ( O  O )
-  ( \ -- / )
-  \ \__/\ / /
-   \ )  ( /
-   /______\
-  |________|         
-"""
+
 
 def clean_up():
     system('cls')
@@ -37,11 +29,10 @@ def _generate_stat_line(cont):
         pl_label = f"{GREEN}Player{RESET} " 
         health_color = GREEN if health_coef > 0.5 else ORANGE if health_coef > 0.25 else RED
         mana_color = BLUE
-    else: # Monster
+    else:
         pl_label = f"{RED}Monster{RESET}"
         health_color = GREEN if health_coef > 0.5 else ORANGE if health_coef > 0.25 else RED
         mana_color = BLUE
-    # 1. Health Bar
     health_bar_filled = health_color + '█' * int(bar_length * health_coef) + RESET
     health_bar_empty = '░' * (bar_length - int(bar_length * health_coef))
     health_part = (
@@ -49,7 +40,6 @@ def _generate_stat_line(cont):
         f"{health_bar_filled}{health_bar_empty} "
         f"{int(cont.health):>3}/{cont.max_health:<3}"
     )
-    # 2. Mana Bar
     mana_bar_filled = mana_color + '█' * int(bar_length * mana_coef) + RESET
     mana_bar_empty = '░' * (bar_length - int(bar_length * mana_coef))
     mana_part = (
@@ -59,6 +49,7 @@ def _generate_stat_line(cont):
     return health_part + " " + mana_part
 
 def display_battle_status(monster,player):
+    print("\n")
     print_banner("BATTLE STATS", color=BLUE, separator='~', length = 120)
     monster_line = _generate_stat_line(monster)
     player_line = _generate_stat_line(player)
@@ -77,6 +68,5 @@ def print_splash_screen():
     print(CYAN + "=" * 50 + RESET)
     print(f"{CYAN}       {MAGENTA}SIMPLE CONSOLE RPG - BATTLE COMMENCE!{RESET}")
     print(CYAN + "=" * 50 + RESET)
-    print(f"{RED}Your enemy appears...{RESET}")
-    print(MONSTER_ART)
+    print(f"{RED}{game.monster.name} appears...{RESET}")
     sleep(1)

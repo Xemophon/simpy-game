@@ -7,11 +7,12 @@ from objects import *
 from items import *
 
 #Game Loop
-print_splash_screen()
 selected = 0
+floor = 0
+game.monster = game.beasts[floor]
+print_splash_screen()
 while selected == 0:
     try:
-        game.monster = game.boss
         print_banner("SELECT CLASS", color=RED, separator='/')
         ind = 0
         for clas in game.classes:
@@ -28,6 +29,7 @@ clean_up()
 while game.player.health > 0 and game.monster.health > 0:
     try:
         print_banner(f"BATTLE ROUND {bround}", color=BLUE, separator='=')
+        print("\n")
         debuff_effect(game.player, active_debuffs_p)
         buff_effect(game.player, active_buffs_p)
         if game.player.isStunned == False:
@@ -48,9 +50,20 @@ while game.player.health > 0 and game.monster.health > 0:
         elif game.player.isStunned == True:
             print_banner("PLAYER STUNNED", color=ORANGE, separator='~')
         if game.monster.health <= 0:
-            print_banner("YOU WON", color=GREEN, separator='*')
+            floor += 1
+            if floor == 4:
+                print_banner("YOU WON", color=GREEN, separator='*')
+                sleep(3)
+                break
+            clean_up()
+            print_banner("NEXT FLOOR", color=GREEN, separator='*')
+            game.monster = game.beasts[floor]
+            print("\n")
+            print_banner(f"{game.monster.name} aproaches", color=RED, separator='=')
+            print("\n")
+            bround = 1
             sleep(3)
-            break
+            continue
         print_banner("MONSTER TURN", color=RED, separator='#')
         debuff_effect(game.monster, active_debuffs_m)
         buff_effect(game.monster, active_buffs_m)

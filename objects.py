@@ -28,13 +28,13 @@ class Cont():
     def refund_money(self, cont):
         self.money += round((cont.max_health - cont.health) / 2)
 
-    def attack(self, cont, isSpell = False, mattack = 0):
+    def attack(self, cont, isSpell = False, magic_attack = 0):
         roll_chance = randint(0, 100)
         if roll_chance > self.dodge_chance * 100:
             if isSpell == False:
                 attack = randint(round(self.damage * (1 - self.crit_chance)), self.damage)
             else:
-                attack = mattack
+                attack = magic_attack
             if cont.shield == 0 or isSpell == True:
                 if self.damage == attack:
                     print(f"  {RED}💥💥 Critical Hit! {cont.name} took {attack} damage.{RESET}")
@@ -53,7 +53,10 @@ class Cont():
             print(f"  {CYAN}🛡️ {cont.name} evaded the attack.{RESET}")
     
     def spell(self, spell, cont):
-        mattack = randint(spell.atpower - 10, spell.atpower)
+        if spell.type == cont.weakness:
+            mattack = spell.atpower + round(spell.atpower * 0.5)
+        else:
+            mattack = randint(spell.atpower - 10, spell.atpower)
         self.mana -= spell.exhaust
         print(f"{BLUE}✨ {spell.name} CAST!{RESET} {cont.name} is struck by arcane energy!")
         print(f"  {RED}⚡ Damage Dealt: {mattack}{RESET} | Cost: {BLUE}{spell.exhaust} Mana{RESET}")
@@ -138,19 +141,20 @@ class Armor(Item):
         super().__init__(name, price, power, quantity, heal, armor, remana)
 
 class Spell():
-    def __init__(self, name, atpower, exhaust):
+    def __init__(self, name, type, atpower, exhaust):
         self.name = name
+        self.type = type
         self.atpower = atpower
         self.exhaust = exhaust
 
 class Debuff(Spell):
-    def __init__(self, name, atpower, exhaust, effect, duration):
-        super().__init__(name, atpower, exhaust)
+    def __init__(self, name, type, atpower, exhaust, effect, duration):
+        super().__init__(name, type, atpower, exhaust)
         self.effect = effect
         self.duration = duration
 
 class Buff(Spell):
-    def __init__(self, name, atpower, exhaust, effect, duration):
-        super().__init__(name, atpower, exhaust)
+    def __init__(self, name, type, atpower, exhaust, effect, duration):
+        super().__init__(name, type, atpower, exhaust)
         self.effect = effect
         self.duration = duration
