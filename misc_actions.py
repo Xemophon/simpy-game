@@ -1,5 +1,6 @@
 #Libs
 import items as game
+import objects as temp
 from time import sleep
 from os import system
 
@@ -18,19 +19,19 @@ def clean_up():
     system('cls')
 
 def show_stats(self):
-    print_banner(f"SELECTED {self.role}", color=RED, separator='/')
+    print_banner(f"SELECTED {self.name} as {self.role}", color=RED, separator='/')
     print_banner(f"Health: {self.max_health}, Mana: {self.max_mana}, Damage:{self.damage}, Shield:{self.shield}", color=GREEN, separator='/')
 
 def _generate_stat_line(cont):
     health_coef = cont.health / cont.max_health
     mana_coef = cont.mana / cont.max_mana
     bar_length = 20
-    if cont == game.player:
-        pl_label = f"{GREEN}Player{RESET} " 
+    if isinstance(cont, temp.Player):
+        pl_label = f"{GREEN} {cont.name} {RESET} " 
         health_color = GREEN if health_coef > 0.5 else ORANGE if health_coef > 0.25 else RED
         mana_color = BLUE
     else:
-        pl_label = f"{RED}Monster{RESET}"
+        pl_label = f"{RED}{cont.name}{RESET}"
         health_color = GREEN if health_coef > 0.5 else ORANGE if health_coef > 0.25 else RED
         mana_color = BLUE
     health_bar_filled = health_color + '█' * int(bar_length * health_coef) + RESET
@@ -53,7 +54,7 @@ def display_battle_status(monster,player):
     print_banner("BATTLE STATS", color=BLUE, separator='~', length = 120)
     monster_line = _generate_stat_line(monster)
     player_line = _generate_stat_line(player)
-    monster_extra_stats = f"{RED}Damage: {monster.damage:<4} | Shield: {CYAN}{monster.shield}{RESET} | Assets: {ORANGE}inf{RESET}"
+    monster_extra_stats = f"{RED}Damage: {monster.damage:<4} | Shield: {CYAN}{monster.shield}{RESET} | Assets: {ORANGE}{player.money}{RESET}"
     player_extra_stats = f"{GREEN}Damage: {player.damage:<4} | Shield: {CYAN}{player.shield}{RESET} | Assets: {ORANGE}{player.money}{RESET}"
     print(monster_line + f" {monster_extra_stats}")
     print(player_line + f" {player_extra_stats}")

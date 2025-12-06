@@ -23,16 +23,16 @@ active_buffs_m = {}
 active_debuffs_p = {}
 active_buffs_p = {}
 
-def choice_f(cont, choice_f):
+def choice_f(cont, contr , choice_f):
         if choice_f == 1:
-            atks_func(cont)
+            atks_func(cont, contr)
         elif choice_f == 2:
             potion_func(cont)
         elif choice_f == 3:
             item_func(cont)
 
-def atks_func(cont):
-    if cont == game.player:
+def atks_func(cont, contr):
+    if isinstance(cont, temp.Player):
         print_banner("PLAYER ATTACK", color=GREEN, separator='-')
         print(f"  {RED}1. ⚔️ PHYSICAL ATTACK{RESET}")
         print(f"  {BLUE}2. ✨ MAGICAL SPELL{RESET}")
@@ -41,7 +41,7 @@ def atks_func(cont):
         except ValueError:
             atks = 1
         if atks == 1 or cont.mana <= 0:
-            game.player.attack(game.monster)
+            cont.attack(contr)
         elif atks == 2 and cont.mana > 0:
             for i, spell in enumerate(game.spells):
                 idx = i + 1
@@ -77,8 +77,8 @@ def atks_func(cont):
                 active_buffs_p.update({selected_spell : selected_spell.duration})
                 print(f"{GREEN}Cast Successful! {selected_spell.name} applied to Player.{RESET}")
             else:
-                game.player.spell(selected_spell, game.monster)
-    elif cont == game.monster:
+                cont.spell(selected_spell, contr)
+    elif isinstance(cont, temp.Monster):
         magic_chance = randint(1, 10)
         spell_choice = game.spells[randint(0, len(game.spells) - 1)]
         if magic_chance > 7 and cont.mana >= spell_choice.exhaust:
@@ -101,7 +101,7 @@ def atks_func(cont):
 
 def potion_func(cont):
     potion_l = global_potions
-    if cont == game.player:
+    if isinstance(cont, temp.Player):
         print_banner("POTION INVENTORY", color=CYAN, separator='*')
         ind = 0
         for potion in potion_l.keys():
@@ -121,7 +121,7 @@ def potion_func(cont):
         else:
             print("Not enough assets")
             raise IndexError
-    elif cont == game.monster:
+    elif isinstance(cont, temp.Monster):
         print_banner("HEAL ACTION", color=GREEN, separator='-')
         potionc = randint(1,3)
     cont.drink(game.potions[potionc - 1])

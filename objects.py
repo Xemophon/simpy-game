@@ -53,8 +53,11 @@ class Cont():
             print(f"  {CYAN}🛡️ {cont.name} evaded the attack.{RESET}")
     
     def spell(self, spell, cont):
-        if spell.type == cont.weakness:
-            mattack = spell.atpower + round(spell.atpower * 0.5)
+        if isinstance(cont, Monster):
+            if spell.type == cont.weakness:
+                mattack = spell.atpower + round(spell.atpower * 0.5)
+            else:
+                mattack = randint(spell.atpower - 10, spell.atpower)
         else:
             mattack = randint(spell.atpower - 10, spell.atpower)
         self.mana -= spell.exhaust
@@ -109,6 +112,8 @@ class Player(Cont):
         super().__init__(name, max_health, max_mana, health, damage, shield, mana, crit_chance, dodge_chance, isStunned, money)
         self.role = role
         
+    def __copy__(self):
+        pass
 
 class Monster(Cont):
     def __init__(self, weakness, role, name, max_health, max_mana, health, damage, shield, mana, crit_chance, dodge_chance, isStunned = False, money = 150):
