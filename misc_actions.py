@@ -73,7 +73,7 @@ def display_battle_status(cont_1, cont_2):
     print("\n")
 
 def stats_pulsate(actor, status, cont_1, cont_2):
-    frames = 10
+    frames = 6
     color_1 = ""
     color_2 = ""
     if actor == cont_2:
@@ -99,10 +99,10 @@ def stats_pulsate(actor, status, cont_1, cont_2):
             print(line_2)
         print(CYAN + "=" * 120 + RESET)
         print("\n")
-        sleep(0.07) 
+        sleep(0.1) 
         clean_up()
         display_battle_status(cont_1, cont_2)
-        sleep(0.07)
+        sleep(0.1)
     clean_up()
     display_battle_status(cont_1, cont_2)
 

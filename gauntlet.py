@@ -42,7 +42,7 @@ while game.player.health > 0 and game.monster.health > 0:
             print("-" * 45)
             choice_p = int(input("Choose action: "))
             if choice_p not in [1, 2, 3]:
-                print_banner("ACTION: SURRENDERED", color=ORANGE, separator='~')
+                animated_banner("ACTION: SURRENDERED", color=ORANGE, separator='~', time = 0.02)
                 break
             choice_f(game.player, game.monster, choice_p)
             sleep(3)
@@ -66,7 +66,7 @@ while game.player.health > 0 and game.monster.health > 0:
                 sleep(3)
                 break
             clean_up()
-            print_banner("NEXT FLOOR", color=GREEN, separator='*')
+            animated_banner("NEXT FLOOR", color=GREEN, separator='*')
             game.monster = game.beasts[floor]
             print("\n")
             print_banner(f"{game.monster.name} aproaches", color=RED, separator='=')
