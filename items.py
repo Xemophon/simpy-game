@@ -20,6 +20,7 @@ axe = Weapon("Battle Axe", 45, 15, 1)
 spear = Weapon("Steel Spear", 40, 12, 1)
 excalibur = Weapon("Excalibur", 150, 45, 1)
 mjolnir = Weapon("Thunder Hammer", 120, 35, 1)
+djin = Item("Jin Jitnq", 250, float("inf"), 1, float("inf"), float("inf"), float("inf"))
 
 # --- ARMOR ---
 leather = Armor("Leather Tunic", 15, 4, 1)
@@ -41,24 +42,28 @@ spirit_water = Potions("Spirit Water", 30, 0, 100, 2) # Massive Mana
 fblas = Spell("Flaming Blast", "Fire", 40, 40)
 iblas = Spell("Icicle", "Ice", 25, 15)
 lighty = Spell("Flying Crucifix", "Holy", 30, 20)
+strike = Spell("Southern Gust", "Wind", 20, 10)
 maxdop = Spell("Meteo Strike", "Physical", 100, 150)
 poison = Debuff("Deadly Mist", "Witchery", 15, 35, "Poison", 3)
+poweak = Debuff("Enchaining Smite", "Witchery", 10, 35, "Weakness", 2)
+strip = Debuff("Buldozer", "Degrade", 10, 80, "Break", 1)
 stun_1 = Debuff("Mirage","Physical", 5, 45, "Stun", 3)
 barding = Buff("Bard Healing", None, 20, 50, "Heal", 4)
 remaning = Buff("Mana Extraction", None, 15, 30, "Remana", 4)
 berserk = Buff("Berserker Fury", None, 40, 80, "Strength", 2)
 protec = Buff("Earth's Protection", None, 50, 80, "Resistance", 2)
+cleanse = Buff("Soul Retribution", "Holy", 0, 50, "Cleanse", 1)
 
 #Assigning Inventories
 classes = [warrior, mage, rogue]
 
 beasts = [slime, goblin, orc, lich, boss]
 
-items_u = [dagger, club, axe, spear, excalibur, mjolnir, leather, buckler, chainmail, kite_shield, dragon, aegis]
+items_u = [dagger, club, axe, spear, excalibur, mjolnir, djin, leather, buckler, chainmail, kite_shield, dragon, aegis]
 
 potions = [sip_hp, sip_mana, elixir, panacea, spirit_water]
 
-spells = [fblas, iblas, lighty, maxdop, poison, stun_1, barding, remaning, berserk, protec]
+spells = [fblas, iblas, lighty, strike, maxdop, poison, poweak, strip, stun_1, barding, remaning, berserk, protec, cleanse]
 
 #Round and statuses
 bround = 1

@@ -174,7 +174,9 @@ def debuff_effect(cont, debuff_list):
             if debuff_list[element] < 0:
                 print(f"The effect of {element.effect} has worn off!")
                 if element.effect == "Stun":
-                    cont.isStunned = False                    
+                    cont.isStunned = False
+                if element.effect == "Weakness":
+                    cont.damage += element.atpower*element.duration            
                 del debuff_list[element]
                 continue
             cont.debuff(element)
@@ -188,7 +190,15 @@ def buff_effect(cont, buff_list):
                 if element.effect == "Strength":
                     cont.damage -= element.atpower*element.duration
                 if element.effect == "Resistance":
-                    cont.shield -= element.atpower*element.duration       
+                    cont.shield -= element.atpower*element.duration
+                if element.effect == "Cleanse":
+                    cleanse(active_debuffs_m if cont == game.monster or cont == game.player_2 else active_buffs_p)
                 del buff_list[element]
                 continue 
             cont.buff(element)
+
+def cleanse(debuff_list):
+    for item in list(debuff_list.keys()):
+        del debuff_list[item]
+
+#TODO Implement 

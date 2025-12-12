@@ -40,7 +40,9 @@ class Cont():
                     attack = randint(int(self.damage * 0.8), self.damage)
             else:
                 attack = magic_attack
-            if cont.shield == 0 or isSpell == True:
+            if self.damage <= 0:
+                print(f"  {CYAN}🛡️ {cont.name} evaded the attack.{RESET}")
+            elif cont.shield == 0 or isSpell == True:
                 if is_crit:
                     print(f"  {RED}💥💥 Critical Hit! {cont.name} took {attack} damage.{RESET}")
                 else:
@@ -75,6 +77,10 @@ class Cont():
             self.health -= inflict.atpower
         elif inflict.effect == "Stun":
             self.isStunned = True
+        elif inflict.effect == "Weakness":
+            self.damage -= inflict.atpower
+        elif inflict.effect == "Break":
+            self.shield = 0
         print(f"  {GREEN}💥 {self.name} afflicted by {inflict.effect}. Took {round(inflict.atpower)} damage.{RESET}")
 
     def buff(self, rebound):
