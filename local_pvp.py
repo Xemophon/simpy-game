@@ -43,15 +43,19 @@ while game.player_1.health > 0 and game.player_2.health > 0:
             print(
                 f"1. {RED}⚔️  ATTACK{RESET}     — Deal Damage\n"
                 f"2. {GREEN}🧪  HEAL{RESET}       — Restore HP/Mana\n"
-                f"3. {MAGENTA}🛡️  EQUIP/ITEM{RESET} — Gain Stats/Shield\n"
+                f"3. {MAGENTA}🛡️  VISIT STORE{RESET} — Buy equipment and refill potions\n"
                 f"4. {ORANGE}🏳️  SURRENDER{RESET}  — End Game"
             )
             print("-" * 45)
             choice_p = int(input("Choose action: "))
-            if choice_p not in [1, 2, 3]:
-                print_banner("ACTION: SURRENDERED", color=RED, separator='~')
-                break
-            choice_f(game.player_1, game.player_2, choice_p)
+            if choice_p not in [1, 2]:
+                if choice_p == 3:
+                    store(game.player_1, player_potions_1)
+                else:
+                    print_banner("ACTION: SURRENDERED", color=RED, separator='~')
+                    break
+            else:
+                choice_f(game.player_1, game.player_2, choice_p)
             sleep(2)
         elif game.player_1.isStunned == True:
             print_banner("P1 STUNNED", color=ORANGE, separator='~')
@@ -67,15 +71,19 @@ while game.player_1.health > 0 and game.player_2.health > 0:
             print(
                 f"1. {RED}⚔️  ATTACK{RESET}     — Deal Damage\n"
                 f"2. {GREEN}🧪  HEAL{RESET}       — Restore HP/Mana\n"
-                f"3. {MAGENTA}🛡️  EQUIP/ITEM{RESET} — Gain Stats/Shield\n"
+                f"3. {MAGENTA}🛡️  VISIT STORE{RESET} — Buy equipment and refill potions\n"
                 f"4. {ORANGE}🏳️  SURRENDER{RESET}  — End Game"
             )
             print("-" * 45)
             choice_m = int(input("Choose action: "))
-            if choice_m not in [1, 2, 3]:
-                print_banner("ACTION: SURRENDERED", color=RED, separator='~')
-                break
-            choice_f(game.player_2, game.player_1, choice_m)
+            if choice_m not in [1, 2]:
+                if choice_m == 3:
+                    store(game.player_2, player_potions_2)
+                else:
+                    print_banner("ACTION: SURRENDERED", color=RED, separator='~')
+                    break
+            else:
+                choice_f(game.player_2, game.player_1, choice_m)
             sleep(2)
         elif game.player_2.isStunned == True:
             print_banner("P2 STUNNED", color=ORANGE, separator='~')

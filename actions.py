@@ -5,12 +5,14 @@ import objects as temp
 from misc_actions import *
 
 global_potions = {}
+store_potions = {}
 for potion in game.potions:
     global_potions.update({potion.name : potion.quantity})
+    store_potions.update({potion.name : potion.price})
 
-global_items_dic = {}
+store_items = {}
 for item in game.items_u:
-    global_items_dic.update({item.name : item.quantity})
+    store_items.update({item.name : item.quantity})
 
 global_spells_l = []
 for spell in game.spells:
@@ -19,17 +21,17 @@ for spell in game.spells:
 #Active Buffs and Debuffs
 active_debuffs_m = {}
 active_buffs_m = {}
+player_potions_2 = global_potions.copy()
 
 active_debuffs_p = {}
 active_buffs_p = {}
+player_potions_1 = global_potions.copy()
 
 def choice_f(cont, contr , choice_f):
         if choice_f == 1:
             atks_func(cont, contr)
         elif choice_f == 2:
             potion_func(cont)
-        elif choice_f == 3:
-            item_func(cont)
 
 def atks_func(cont, contr):
     if isinstance(cont, temp.Player):
@@ -102,25 +104,23 @@ def atks_func(cont, contr):
 def potion_func(cont):
     potion_l = global_potions
     if isinstance(cont, temp.Player):
+        potion_l = player_potions_1
         print_banner("POTION INVENTORY", color=CYAN, separator='*')
-        ind = 0
-        for potion in potion_l.keys():
+        for i, potion in enumerate(potion_l.keys()):
             print(
                 f"{CYAN}{BOLD}✧ Potion :{RESET} {CYAN}{potion}{RESET} | {potion_l[potion]} left | "
-                f"Returns {BLUE}{game.potions[ind].remana}{RESET} Mana | "
-                f"Rejuvanates {GREEN}{game.potions[ind].heal} Health{RESET} |"
-                f"Costs {ORANGE}{game.potions[ind].price} money{RESET} |"
+                f"Returns {BLUE}{game.potions[i].remana}{RESET} Mana | "
+                f"Rejuvanates {GREEN}{game.potions[i].heal} Health{RESET} |"
                 )
-            ind += 1
         potionc = int(input("Choose potion with number: "))
-        if cont.money >= (game.potions[potionc - 1]).price:
-            print_banner("HEAL ACTION", color=GREEN, separator='-')
-            (game.potions[potionc - 1]).quantity -= 1
-            potion_l[(game.potions[potionc - 1]).name] -= 1
-            cont.money -= (game.potions[potionc - 1]).price
-        else:
-            print("Not enough assets")
-            raise IndexError
+        print_banner("HEAL ACTION", color=GREEN, separator='-')
+        (game.potions[potionc - 1]).quantity -= 1
+        potion_l[(game.potions[potionc - 1]).name] -= 1
+        for name in list(potion_l.keys()):
+            if potion_l[name] == 0:
+                potion_l.pop(name)
+                game.potions.pop(potionc - 1)
+                break
     elif isinstance(cont, temp.Monster):
         print_banner("HEAL ACTION", color=GREEN, separator='-')
         potionc = randint(1,3)
@@ -134,15 +134,11 @@ def potion_func(cont):
     if cont.mana >= cont.max_mana:
         cont.mana = cont.max_mana
         print(f"{ORANGE}🛡️ Mana already MAXED ({int(cont.max_mana)} MANA)! Remana capped.{RESET}")
-    for name in list(potion_l.keys()):
-        if potion_l[name] == 0:
-            potion_l.pop(name)
-            game.potions.pop(potionc - 1)
-            break
 
 def item_func(cont):
-    print_banner("EQUIPMENT/ITEM USE", color=MAGENTA, separator='^')
-    items_dic = global_items_dic
+    clean_up()
+    print_banner("AVIALABLE EQUIPMENT", color=MAGENTA, separator='^')
+    items_dic = store_items
     ind = 0
     for item in items_dic.keys():
         print(f"{ORANGE}{BOLD}✧ Item :{RESET} {ORANGE}{item}{RESET} | {items_dic[item]} left | Costs {game.items_u[ind].price}")
@@ -152,20 +148,70 @@ def item_func(cont):
             print(f"     {CYAN}└── 🛡️  Block: {game.items_u[ind].armor}{RESET}")
         ind += 1
     itemsc = int(input("Choose item with number: "))
-    if cont.money >= game.items_u[itemsc - 1].price:
-        cont.money -= game.items_u[itemsc - 1].price
-        cont.equip(game.items_u[itemsc - 1])
-        (game.items_u[itemsc - 1]).quantity -= 1
-        items_dic[(game.items_u[itemsc - 1]).name] -= 1
-        print(f"{GREEN}Equipped!{RESET}")
+    bitem = (game.items_u[itemsc - 1])
+    if cont.money >= bitem.price:
+        cont.money -= bitem.price
+        cont.equip(bitem)
+        bitem.quantity -= 1
+        items_dic[bitem.name] -= 1
+        animated_banner(f"SUCCSESSFULLY BOUGHT {bitem.name}", GREEN)
         for name in list(items_dic.keys()):
             if items_dic[name] == 0:
                 items_dic.pop(name)
                 game.items_u.pop(itemsc - 1)
                 break
     else:
-        print(f"{RED}Not enough assets{RESET}")
         raise IndexError
+
+def store(cont, potion_list):
+    ready = False
+    potions = game.potions
+    animated_banner("WANDERING TRADER", color=BLUE, separator='=')
+    while ready == False:
+        try:
+            print_banner("STORE PHASE", color=ORANGE, separator='-')
+            print(
+                f"1. {MAGENTA}⚔️  EQUIPMENT{RESET}     — Buy Equipment\n"
+                f"2. {GREEN}🧪  POTIONS{RESET}       — Buy Potions\n"
+                f"3. {CYAN}🏳️ EXIT{RESET}  — Exit Store"
+            )
+            print("-" * 45)
+            choice_p = int(input("Choose action: "))
+            if choice_p == 1:
+                item_func(cont)
+                clean_up()
+            elif choice_p == 2:
+                for i, potion in enumerate(store_potions.keys()):
+                    print(
+                        f"{CYAN}{BOLD}✧ Potion :{RESET} {CYAN}{potion}{RESET}"
+                        f"Returns {BLUE}{game.potions[i].remana}{RESET} Mana | "
+                        f"Rejuvanates {GREEN}{game.potions[i].heal} Health{RESET} |"
+                        f"Costs {ORANGE}{game.potions[i].price} Money{RESET} |"
+                        )
+                    sleep(2)
+                potionc = int(input("Choose potion with number: "))
+                bpotion = potions[potionc - 1]
+                if cont.money >= bpotion.price:
+                    animated_banner("SUCCSESSFULLY BOUGHT POTION", GREEN)
+                    cont.money -= bpotion.price
+                    if bpotion.name not in list(potion_list.keys()):
+                        potion_list.update({bpotion.name : 1})
+                    else:
+                        potion_list[bpotion.name] += 1
+                    sleep(1)
+                    clean_up()
+            elif choice_p == 3:
+                ready = True
+                clean_up()
+            else:
+                raise ValueError
+            
+        except ValueError:
+            clean_up()
+            print_banner("INPUTTED WRONG NUMBER, DUMMY", color=RED, separator='#')
+        except TypeError:
+            clean_up()
+            print_banner("NOT ENOUGH ASSETS", RED)
 
 def debuff_effect(cont, debuff_list):
     if debuff_list:
@@ -200,5 +246,3 @@ def buff_effect(cont, buff_list):
 def cleanse(debuff_list):
     for item in list(debuff_list.keys()):
         del debuff_list[item]
-
-#TODO Implement 

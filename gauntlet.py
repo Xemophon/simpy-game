@@ -36,14 +36,16 @@ while game.player.health > 0 and game.monster.health > 0:
             print(
                 f"1. {RED}⚔️  ATTACK{RESET}     — Deal Damage\n"
                 f"2. {GREEN}🧪  HEAL{RESET}       — Restore HP/Mana\n"
-                f"3. {MAGENTA}🛡️  EQUIP/ITEM{RESET} — Gain Stats/Shield\n"
-                f"4. {ORANGE}🏳️  SURRENDER{RESET}  — End Game"
+                f"3. {ORANGE}🏳️  SURRENDER{RESET}  — End Game"
             )
             print("-" * 45)
             choice_p = int(input("Choose action: "))
-            if choice_p not in [1, 2, 3]:
-                animated_banner("ACTION: SURRENDERED", color=ORANGE, separator='~', time = 0.02)
-                break
+            if choice_p not in [1, 2]:
+                if choice_p == 3:
+                    animated_banner("ACTION: SURRENDERED", color=ORANGE, separator='~', time = 0.02)
+                    break
+                else:
+                    raise ValueError
             choice_f(game.player, game.monster, choice_p)
             sleep(3)
             clean_up()
@@ -65,7 +67,7 @@ while game.player.health > 0 and game.monster.health > 0:
                 print_banner("YOU WON", color=GREEN, separator='*')
                 sleep(3)
                 break
-            clean_up()
+            store(game.player, player_potions_1)
             animated_banner("NEXT FLOOR", color=GREEN, separator='*')
             game.monster = game.beasts[floor]
             print("\n")

@@ -31,11 +31,11 @@ dragon = Armor("Dragon Scale", 130, 35, 1)
 aegis = Armor("Aegis of Immortality", 200, 50, 1)
 
 # --- POTIONS ---
-sip_hp = Potions("Sip of Health", 3, 5, 0, 10)
-sip_mana = Potions("Sip of Mana", 3, 0, 5, 10)
-elixir = Potions("Grand Elixir", 50, 50, 50, 3) # Full restore
-panacea = Potions("Panacea", 30, 100, 0, 2) # Massive Heal, no mana
-spirit_water = Potions("Spirit Water", 30, 0, 100, 2) # Massive Mana
+sip_hp = Potions("Sip of Health", 3, 5, 0, 5)
+sip_mana = Potions("Sip of Mana", 3, 0, 5, 5)
+elixir = Potions("Grand Elixir", 50, 50, 50, 2) # Full restore
+panacea = Potions("Panacea", 30, 100, 0, 1) # Massive Heal, no mana
+spirit_water = Potions("Spirit Water", 30, 0, 100, 1) # Massive Mana
 
 
 #Spells
