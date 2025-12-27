@@ -28,7 +28,7 @@ def health_check(cont, contr, temp):
     status = "" # Default
     if cont.health == temp:
         status = "evaded"
-    elif (temp - cont.health) >= (contr.damage * 1.5): 
+    elif (temp - cont.health) >= (contr.damage * 1.1): 
         status = "crit"
     elif cont.health < temp:
         status = "atk"
