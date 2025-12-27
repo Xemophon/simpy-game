@@ -24,18 +24,20 @@ def clean_up():
     system('cls')
 
 def health_check(cont, contr, temp):
+    """Checks health to determine what color to push for animation"""
+    status = "" # Default
     if cont.health == temp:
         status = "evaded"
     elif cont.health > temp:
         status = "heal"
-    elif (temp - cont.health) == (contr.damage * 1.5):
+    elif (temp - cont.health) >= (contr.damage * 1.5): 
         status = "crit"
     elif cont.health < temp:
         status = "atk"
-    temp = cont.health
-    return status
+    return status, cont.health
     
 def strip_ansi(text):
+    """Clears the format"""
     ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
     return ansi_escape.sub('', text)
 
@@ -88,6 +90,7 @@ def display_battle_status(cont_1, cont_2):
     print("\n")
 
 def stats_pulsate(actor, status, cont_1, cont_2):
+    """Animates the console output of the stats according to the changes"""
     frames = 6
     color_1 = ""
     color_2 = ""

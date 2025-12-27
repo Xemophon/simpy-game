@@ -15,17 +15,14 @@ import objects as temp
 def send_data(sock, data):
     """Pickles and sends data with a size prefix."""
     serialized = pickle.dumps(data)
-    # Pack the length of the data as a 4-byte big-endian integer
     sock.sendall(struct.pack('>I', len(serialized)) + serialized)
 
 def recv_data(sock):
     """Receives size prefix and then the full pickled data."""
-    # Read the first 4 bytes to get the length
     raw_msglen = recvall(sock, 4)
     if not raw_msglen:
         return None
     msglen = struct.unpack('>I', raw_msglen)[0]
-    # Read the rest of the data
     return pickle.loads(recvall(sock, msglen))
 
 def recvall(sock, n):
@@ -48,7 +45,6 @@ def setup_network():
 
     if choice == '1':
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        # 0.0.0.0 listens on all available interfaces
         server_socket.bind(('0.0.0.0', 5555)) 
         server_socket.listen(1)
         
@@ -60,7 +56,7 @@ def setup_network():
         
         conn, addr = server_socket.accept()
         print(f"Connected to {addr}")
-        return conn, True # True = I am Host (Player 1)
+        return conn, True 
         
     elif choice == '2':
         target_ip = input("Enter Host IP: ")
@@ -68,7 +64,7 @@ def setup_network():
         try:
             client_socket.connect((target_ip, 5555))
             print("Connected!")
-            return client_socket, False # False = I am Client (Player 2)
+            return client_socket, False 
         except:
             print("Connection failed.")
             sleep(2)
@@ -87,7 +83,6 @@ def select_character():
         try:
             role_choice = int(input("Choice: "))
             if 1 <= role_choice <= len(game.classes):
-                # Return a COPY so we don't modify the template
                 return deepcopy(game.classes[role_choice - 1])
         except ValueError:
             pass
@@ -101,14 +96,12 @@ def run_lan_game():
 
     # 1. Select Character
     my_player = select_character()
-    game.player = my_player # Set global for stat display functions
+    game.player = my_player 
 
     print("Waiting for opponent to select...")
     
     # 2. Exchange Initial States
-    # Send my character data
     send_data(conn, my_player)
-    # Receive enemy character data
     enemy_player = recv_data(conn)
     
     if not enemy_player:
@@ -118,22 +111,21 @@ def run_lan_game():
     print_banner(f"VERSUS: {enemy_player.role}", color=RED)
     sleep(2)
 
-    # 3. Battle Loop
+    # 3. Initialize Health Trackers for Animation
+    temp_health_me = my_player.health
+    temp_health_enemy = enemy_player.health
+
+    # 4. Battle Loop
     battle_active = True
-    
-    # Host goes first
     my_turn = is_host
     
     while my_player.health > 0 and enemy_player.health > 0:
         clean_up()
-        
-        # Display Stats (Enemy is passed as 'monster' so it shows Red)
         display_battle_status(enemy_player, my_player)
         
         if my_turn:
             print_banner("YOUR TURN", color=GREEN)
             
-            # Apply my Buffs/Debuffs locally
             debuff_effect(my_player, active_debuffs_p)
             buff_effect(my_player, active_buffs_p)
             
@@ -146,18 +138,22 @@ def run_lan_game():
                 try:
                     choice_p = int(input("Action: "))
                     if choice_p in [1, 2]:
-                        # Execute action locally against the copy of the enemy
+                        # Perform Action Locally
                         choice_f(my_player, enemy_player, choice_p)
-                        if choice_p == 1:
-                            status = "atk"
+                        
+                        # -- Animation Logic --
+                        clean_up()
+                        if choice_p == 1: # Attack
+                            status, temp_health_enemy = health_check(enemy_player, my_player, temp_health_enemy)
                             stats_pulsate(my_player, status, enemy_player, my_player)
-                        elif choice_p == 2:
-                            status = "heal"
+                        elif choice_p == 2: # Heal
+                            status, temp_health_me = health_check(my_player, enemy_player, temp_health_me)
                             stats_pulsate(my_player, status, enemy_player, my_player)
-
+                        
                     elif choice_p == 3:
-                        # Open Store - This takes a turn
                         store(my_player, player_potions_1)
+                        # Store doesn't change health immediately usually, but just in case
+                        temp_health_me = my_player.health 
                     else:
                         print("Skipped turn (Invalid Input)")
                 except ValueError:
@@ -168,10 +164,8 @@ def run_lan_game():
             sleep(1)
             print("Sending move to opponent...")
             
-            # Send the updated state of BOTH players to sync the game
-            # We send [My_New_State, Enemy_New_State_After_Damage]
+            # Send updated states
             send_data(conn, (my_player, enemy_player))
-            
             my_turn = False
             
         else:
@@ -183,10 +177,27 @@ def run_lan_game():
             if not new_states:
                 break
                 
-            # Unpack: The sender sent (Them, Me). 
-            # So for me, index 0 is Enemy, index 1 is Me.
-            enemy_player = new_states[0]
-            my_player = new_states[1]
+            # Unpack States
+            new_enemy_state = new_states[0] # This is THEM (updated)
+            new_my_state = new_states[1]    # This is ME (updated by them)
+
+            # -- Animation Logic (Replay what happened) --
+            clean_up()
+            
+            # Check if I took damage or healed
+            # Note: We pass 'enemy_player' as the actor because it's their turn
+            if new_my_state.health != temp_health_me:
+                # I was hit (or healed by them? unlikely)
+                status, temp_health_me = health_check(new_my_state, new_enemy_state, temp_health_me)
+                stats_pulsate(new_enemy_state, status, new_enemy_state, new_my_state)
+            elif new_enemy_state.health != temp_health_enemy:
+                # They healed themselves
+                status, temp_health_enemy = health_check(new_enemy_state, new_my_state, temp_health_enemy)
+                stats_pulsate(new_enemy_state, status, new_enemy_state, new_my_state)
+            
+            # Update objects
+            enemy_player = new_enemy_state
+            my_player = new_my_state
             
             # Update global reference for UI
             game.player = my_player 

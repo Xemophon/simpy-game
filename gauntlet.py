@@ -53,7 +53,7 @@ while game.player.health > 0 and game.monster.health > 0:
             choice_f(game.player, game.monster, choice_p)
             sleep(3)
             clean_up()
-            status = health_check(game.player, game.monster, temp_health_1)
+            status, temp_health_2 = health_check(game.monster, game.player, temp_health_2)
             stats_pulsate(game.player, status, game.monster, game.player)
             sleep(2)
         elif game.player.isStunned == True:
@@ -81,7 +81,7 @@ while game.player.health > 0 and game.monster.health > 0:
             choice_f(game.monster, game.player, choice_m)
             sleep(3)
             clean_up()
-            status = health_check(game.monster, game.player, temp_health_2)
+            status, temp_health_1 = health_check(game.player, game.monster, temp_health_1)
             stats_pulsate(game.monster, status, game.monster, game.player)
             sleep(2)
         elif game.monster.isStunned == True:
