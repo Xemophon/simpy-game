@@ -53,8 +53,11 @@ while game.player.health > 0 and game.monster.health > 0:
             choice_f(game.player, game.monster, choice_p)
             sleep(3)
             clean_up()
-            status, temp_health_2 = health_check(game.monster, game.player, temp_health_2)
-            stats_pulsate(game.player, status, game.monster, game.player)
+            if choice_p == 1:
+                status, temp_health_2 = health_check(game.monster, game.player, temp_health_2)
+                stats_pulsate(game.player, status, game.monster, game.player)
+            elif choice_p == 2:
+                stats_pulsate(game.player, "heal", game.monster, game.player)
             sleep(2)
         elif game.player.isStunned == True:
             print_banner("PLAYER STUNNED", color=ORANGE, separator='~')
@@ -67,6 +70,7 @@ while game.player.health > 0 and game.monster.health > 0:
             store(game.player, player_potions_1)
             animated_banner("NEXT FLOOR", color=GREEN, separator='*')
             game.monster = game.beasts[floor]
+            temp_health_2 = game.monster.health
             print("\n")
             print_banner(f"{game.monster.name} aproaches", color=RED, separator='=')
             print("\n")
@@ -81,8 +85,11 @@ while game.player.health > 0 and game.monster.health > 0:
             choice_f(game.monster, game.player, choice_m)
             sleep(3)
             clean_up()
-            status, temp_health_1 = health_check(game.player, game.monster, temp_health_1)
-            stats_pulsate(game.monster, status, game.monster, game.player)
+            if choice_m == 1:
+                status, temp_health_1 = health_check(game.player, game.monster, temp_health_1)
+                stats_pulsate(game.monster, status, game.monster, game.player)
+            elif choice_m == 2:
+                stats_pulsate(game.monster, "heal", game.monster, game.player)
             sleep(2)
         elif game.monster.isStunned == True:
             print_banner("MONSTER STUNNED", color=ORANGE, separator='~')

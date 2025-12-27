@@ -24,12 +24,10 @@ def clean_up():
     system('cls')
 
 def health_check(cont, contr, temp):
-    """Checks health to determine what color to push for animation"""
+    """Checks health to determine what attack color to push for animation"""
     status = "" # Default
     if cont.health == temp:
         status = "evaded"
-    elif cont.health > temp:
-        status = "heal"
     elif (temp - cont.health) >= (contr.damage * 1.5): 
         status = "crit"
     elif cont.health < temp:
