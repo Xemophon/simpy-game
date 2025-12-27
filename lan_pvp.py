@@ -138,12 +138,26 @@ def run_lan_game():
             buff_effect(my_player, active_buffs_p)
             
             if not my_player.isStunned:
-                print("1. Attack  2. Heal  3. Item")
+                print(
+                    f"1. {RED}⚔️  ATTACK{RESET}\n"
+                    f"2. {GREEN}🧪  HEAL{RESET}\n"
+                    f"3. {MAGENTA}🛡️  VISIT STORE{RESET}"
+                )
                 try:
                     choice_p = int(input("Action: "))
-                    if choice_p in [1, 2, 3]:
+                    if choice_p in [1, 2]:
                         # Execute action locally against the copy of the enemy
                         choice_f(my_player, enemy_player, choice_p)
+                        if choice_p == 1:
+                            status = "atk"
+                            stats_pulsate(my_player, status, enemy_player, my_player)
+                        elif choice_p == 2:
+                            status = "heal"
+                            stats_pulsate(my_player, status, enemy_player, my_player)
+
+                    elif choice_p == 3:
+                        # Open Store - This takes a turn
+                        store(my_player, player_potions_1)
                     else:
                         print("Skipped turn (Invalid Input)")
                 except ValueError:

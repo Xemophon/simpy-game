@@ -8,6 +8,7 @@ import re
 #Colors
 RED = '\033[91m'
 GREEN = '\033[92m'
+DARKCYAN = '\033[36m'
 ORANGE = '\033[93m'
 BLUE = '\033[94m'
 MAGENTA = '\033[95m' 
@@ -15,11 +16,25 @@ CYAN = '\033[96m'
 BOLD = '\033[1m'
 RESET = '\033[0m'
 
+temp_health_1 = 0
+temp_health_2 = 0
 
 def clean_up():
     """Clears the console"""
     system('cls')
 
+def health_check(cont, contr, temp):
+    if cont.health == temp:
+        status = "evaded"
+    elif cont.health > temp:
+        status = "heal"
+    elif (temp - cont.health) == (contr.damage * 1.5):
+        status = "crit"
+    elif cont.health < temp:
+        status = "atk"
+    temp = cont.health
+    return status
+    
 def strip_ansi(text):
     ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
     return ansi_escape.sub('', text)
@@ -77,10 +92,14 @@ def stats_pulsate(actor, status, cont_1, cont_2):
     color_1 = ""
     color_2 = ""
     if actor == cont_2:
-        if status == "atk": color_1 = RED      # Player 1 takes damage
+        if status == "atk": color_1 = RED # Player 1 takes damage
+        elif status == "crit" : color_1 = ORANGE
+        elif status == "evaded" : color_1 = CYAN
         elif status == "heal": color_2 = GREEN # Player 2 heals
     elif actor == cont_1:
-        if status == "atk": color_2 = RED      # Player 2 takes damage
+        if status == "atk": color_2 = RED  
+        elif status == "crit" : color_2 = ORANGE
+        elif status == "evaded" : color_2 = CYAN
         elif status == "heal": color_1 = GREEN # Player 1 heals
 
     for _ in range(frames):

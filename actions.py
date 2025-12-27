@@ -61,7 +61,7 @@ def atks_func(cont, contr):
                         )
                 else:
                     print(
-                    f"{idx}. {CYAN}{BOLD}Arcane:{RESET} {CYAN}{spell.name}{RESET} "
+                    f"{idx}. {DARKCYAN}{BOLD}Arcane:{RESET} {CYAN}{spell.name}{RESET} "
                     f"({BLUE}{spell.exhaust} Mana{RESET}) — "
                     f"Hits for {ORANGE}{spell.atpower} Dmg{RESET}"
                         )
@@ -104,7 +104,10 @@ def atks_func(cont, contr):
 def potion_func(cont):
     potion_l = global_potions
     if isinstance(cont, temp.Player):
-        potion_l = player_potions_1
+        if hasattr(game, 'player_2') and cont == game.player_2:
+            potion_l = player_potions_2
+        else:
+            potion_l = player_potions_1
         print_banner("POTION INVENTORY", color=CYAN, separator='*')
         for i, potion in enumerate(potion_l.keys()):
             print(

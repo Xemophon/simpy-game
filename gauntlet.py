@@ -26,6 +26,10 @@ while selected == 0:
         print_banner("CHOOSE PLEASE", color=CYAN, separator='/')
 sleep(2)
 clean_up()
+
+temp_health_1 = game.player.health
+temp_health_2 = game.monster.health
+
 while game.player.health > 0 and game.monster.health > 0:
     try:
         animated_banner(f"BATTLE ROUND {bround}", color=BLUE, separator='=')
@@ -49,15 +53,8 @@ while game.player.health > 0 and game.monster.health > 0:
             choice_f(game.player, game.monster, choice_p)
             sleep(3)
             clean_up()
-            if choice_p == 1:
-                status = "atk"
-                stats_pulsate(game.player, status, game.monster, game.player)
-            elif choice_p == 2:
-                status = "heal"
-                stats_pulsate(game.player, status, game.monster, game.player)
-            else:
-                status = None
-                display_battle_status(game.monster, game.player)
+            status = health_check(game.player, game.monster, temp_health_1)
+            stats_pulsate(game.player, status, game.monster, game.player)
             sleep(2)
         elif game.player.isStunned == True:
             print_banner("PLAYER STUNNED", color=ORANGE, separator='~')
@@ -84,15 +81,8 @@ while game.player.health > 0 and game.monster.health > 0:
             choice_f(game.monster, game.player, choice_m)
             sleep(3)
             clean_up()
-            if choice_m == 1:
-                status = "atk"
-                stats_pulsate(game.monster, status, game.monster, game.player)
-            elif choice_m == 2:
-                status = "heal"
-                stats_pulsate(game.monster, status, game.monster, game.player)
-            else:
-                status = None
-                display_battle_status(game.monster, game.player)
+            status = health_check(game.monster, game.player, temp_health_2)
+            stats_pulsate(game.monster, status, game.monster, game.player)
             sleep(2)
         elif game.monster.isStunned == True:
             print_banner("MONSTER STUNNED", color=ORANGE, separator='~')
