@@ -1,55 +1,61 @@
 # Simpy Game ⚔️
 
-A comprehensive, turn-based console RPG built in Python. Use strategy, manage your economy, and battle against AI monsters or your friends via Local and LAN multiplayer.
+![Python](https://img.shields.io/badge/Python-3.x-blue.svg)
+![Status](https://img.shields.io/badge/Status-Active-green.svg)
+![License](https://img.shields.io/badge/License-MIT-orange.svg)
 
-## 📄 Overview
-
-**Simpy Game** is a text-based role-playing game that simulates complex combat mechanics in a terminal environment. Unlike simple text adventures, it features a robust **stat system** (Health, Mana, Shield, Money), **economy management**, and **networking capabilities** for PvP battles.
-
-## 🎮 Game Modes
-
-You can select from three distinct game modes upon launching `Simpy_Game.py`:
-
-1.  **🏰 The Gauntlet (PvE)**
-    * Fight through floors of increasingly difficult monsters (Slime → Goblin → Orc → Lich → Boss).
-    * Manage your resources (HP/Mana) between fights.
-    * **Goal:** Survive all 5 levels to win.
-
-2.  **🤝 Local PvP (Hotseat)**
-    * Two players take turns on the *same computer*.
-    * Draft your class (Warrior, Mage, Rogue) and battle to the death.
-    * Includes an economy phase where players can buy items.
-
-3.  **🌐 LAN PvP (P2P)**
-    * Battle a friend over your **Local Area Network**.
-    * Uses Python `socket` programming to sync game states.
-    * One player Hosts, the other Joins via IP address.
+**Simpy Game** is a feature-rich, turn-based console RPG built entirely in Python. It combines strategic combat, resource management, and real-time visual feedback into a terminal-based experience. Battle against AI monsters in the Gauntlet, challenge a friend on the same PC, or fight across the network in the new LAN PvP mode.
 
 ## ✨ Key Features
 
-### ⚔️ Tactical Combat System
-* **Shield Mechanics:** Shields aren't just extra HP. They provide **% based damage mitigation** (4% per point) but **degrade** when hit.
-* **Status Effects:**
-    * **Stun:** Forces the opponent to skip a turn.
-    * **Poison:** Deals damage over time.
-    * **Buffs:** Temporarily increase Strength (Damage) or Resistance (Shield).
-* **Classes:** Choose between **Warrior** (High HP/Defense), **Mage** (High Mana/Spells), or **Rogue** (High Crit/Dodge).
+### ⚔️ Deep Tactical Combat
+* **Shield Mechanics:** Shields provide **% based damage mitigation** but degrade over time. Managing your shield integrity is key to survival.
+* **Status Effects:** Master the flow of battle with **Stuns** (skip turns), **Poison** (Damage over Time), **Weakness** (Damage Down), and **Breaks** (Shield Destruction).
+* **Elemental System:** Enemies have specific elemental weaknesses (Fire, Ice, Holy, etc.) that deal critical damage.
 
-### 💰 Economy
-* **Assets (Money):** You earn money by damaging opponents or winning rounds.
-* **Shop:** Spend assets mid-battle on **Potions** (Health/Mana/Elixirs) or **Equipment** (Weapons/Armor) to turn the tide of battle.
+### 👁️ Immersive Visuals
+* **Pulsating Stats:** Health and Mana bars flash **Green** when healing or **Red/Orange** when taking damage/critical hits.
+* **Color-Coded Logs:** Combat actions use distinct colors for Crits, Evades, Blocks, and Spells for instant readability.
+* **Clean UI:** Menus for Spells, Potions, and the Shop are displayed in aligned, easy-to-read tables.
 
-## 🛠️ Installation & Setup
+### 💰 Economy & Shop
+* **Earn Assets:** Defeating monsters and winning rounds earns you Gold.
+* **The Wandering Trader:** Visit the shop mid-game to purchase **Potions** (Health/Mana/Elixirs) or upgrade your **Equipment** (Weapons/Armor).
 
-### Prerequisites
-* **Python 3.x** is required.
-* Standard libraries used: `socket`, `pickle`, `time`, `random`, `copy`, `os`, `subprocess`. (No `pip install` required!)
+### 🌐 Multiplayer Support
+* **Local PvP:** Hotseat mode for two players on a single keyboard.
+* **LAN PvP:** Fully functional Peer-to-Peer networking using Python `sockets`. Host a game and battle a friend on your local Wi-Fi.
 
-### Getting Started
+---
+
+## 🎮 Game Modes
+
+Launch the game with `python Simpy_Game.py` and choose from:
+
+### 1. 🏰 The Gauntlet (PvE)
+Ascend through floors of increasingly difficult enemies.
+* **Enemies:** Slime → Goblin → Orc → Lich → **The Boss**.
+* **Mechanic:** Health and Mana persist between fights. Use the **Campfire/Store** phase wisely to restock.
+
+### 2. 🤝 Local PvP (Hotseat)
+* Draft your class (Warrior, Mage, Rogue).
+* Take turns on the same terminal window.
+* Buy items between rounds to counter your opponent.
+
+### 3. 🌐 LAN PvP (Network)
+* **Host:** Select "Host Game" to open a server on port `5555`.
+* **Join:** Enter the Host's local IP address to connect.
+* **Sync:** Game state, health, and animations are synchronized across the network.
+
+---
+
+## 🛠️ Installation
+
+**No external dependencies required!** This project uses only Python standard libraries (`socket`, `pickle`, `time`, `random`, `re`, `os`).
 
 1.  **Clone the repository**
     ```bash
-    git clone [https://github.com/yourusername/simpy-game.git](https://github.com/yourusername/simpy-game.git)
+    git clone [https://github.com/xemophon/simpy-game.git](https://github.com/xemophon/simpy-game.git)
     cd simpy-game
     ```
 
@@ -58,31 +64,19 @@ You can select from three distinct game modes upon launching `Simpy_Game.py`:
     python Simpy_Game.py
     ```
 
-## 📖 How to Play LAN PvP
+---
 
-1.  Ensure both computers are on the same Wi-Fi/Network.
-2.  **Player 1 (Host):**
-    * Select **Gamemode 3** (P2P PVP).
-    * Select **1. Host a Game**.
-    * The console will display your IP Address (e.g., `192.168.1.5`). Share this with Player 2.
-    * Wait for connection.
-3.  **Player 2 (Client):**
-    * Select **Gamemode 3** (P2P PVP).
-    * Select **2. Join a Game**.
-    * Enter the Host's IP Address when prompted.
-4.  Once connected, both players pick their classes and the battle begins!
+## 📖 How to Play
 
-## 📂 Project Structure
+### Controls
+The game uses numeric inputs for navigation.
+* `1`: **Attack** (Physical damage)
+* `2`: **Heal / Potion** (Open Potion Satchel)
+* `3`: **Shop / Item** (Open Store or Equip Menu)
 
-* `Simpy_Game.py`: **Entry point**. Handles the main menu and game mode selection.
-* `gauntlet.py`: Logic for the Single-player PvE campaign.
-* `local_pvp.py`: Logic for Hotseat Multiplayer.
-* `lan_pvp.py`: Handles **Networking**, socket connections, and data serialization (`pickle`) for online play.
-* `actions.py`: Core combat logic (Attacking, Casting Spells, Using Items).
-* `objects.py`: Class definitions for `Player`, `Monster`, and combat math (Crit/Dodge/Shield calcs).
-* `items.py`: Database of all Items, Spells, Monsters, and Player Classes.
-* `misc_actions.py`: UI utilities (Banners, Health Bars, Stat displays).
-
-## 📄 License
-
-This project is open-source. Feel free to fork and improve!
+### Classes
+| Class | Role | Stats | Playstyle |
+| :--- | :--- | :--- | :--- |
+| **Warrior** | Tank | High HP, High Shield | Absorb damage and win attrition battles. |
+| **Mage** | Caster | High Mana, Low HP | Glass cannon. Use spells to nuke enemies. |
+| **Rogue** | DPS | High Crit, High Dodge | RNG-
