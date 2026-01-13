@@ -1,6 +1,11 @@
-import pygame
 import sys
 import os
+import warnings
+
+# Suppress pkg_resources deprecation warning often seen with Pygame in newer Python versions
+warnings.filterwarnings("ignore", category=UserWarning, message=".*pkg_resources is deprecated.*")
+
+import pygame
 from random import randint
 
 # --- CONSTANTS & CONFIG ---
@@ -415,6 +420,9 @@ class GameManager:
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont(None, FONT_SIZE_MAIN)
         self.title_font = pygame.font.SysFont(None, FONT_SIZE_TITLE)
+
+        global assets
+        assets = AssetManager()
 
         self.data = create_game_data()
         self.state = STATE_MENU
