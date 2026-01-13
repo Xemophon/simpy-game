@@ -1,5 +1,6 @@
 import pygame
 import sys
+import os
 from random import randint
 
 # --- CONSTANTS & CONFIG ---
@@ -40,21 +41,52 @@ class AssetManager:
         self.load_assets()
 
     def load_assets(self):
-        # Define paths to expected images.
-        # If file exists, load it. If not, we will use fallback colors.
-        asset_list = {
-            "player": "assets/player.png",
-            "monster": "assets/monster.png",
-            "background": "assets/background.png",
-            "title": "assets/title.png"
-        }
+        # Define base assets directory
+        base_dir = "assets"
+        if not os.path.exists(base_dir):
+            print(f"[Warning] Assets directory '{base_dir}' not found. Using placeholders.")
+            return
 
-        for name, path in asset_list.items():
-            try:
-                img = pygame.image.load(path)
-                self.images[name] = pygame.transform.scale(img, (100, 150)) if name in ["player", "monster"] else img
-            except (FileNotFoundError, pygame.error):
-                self.images[name] = None # Fallback to None
+        # Define expected images
+        asset_names = ["player", "monster", "background", "title"]
+
+        for name in asset_names:
+            self.images[name] = None
+            # Try to find file with common extensions and case insensitivity
+            for ext in [".png", ".jpg", ".jpeg", ".PNG", ".JPG"]:
+                # Try exact name
+                filename = name + ext
+                path = os.path.join(base_dir, filename)
+
+                # If not found, look for case-insensitive match in directory
+                if not os.path.exists(path):
+                    # List dir to find match
+                    try:
+                        files = os.listdir(base_dir)
+                        for f in files:
+                            if f.lower() == filename.lower():
+                                path = os.path.join(base_dir, f)
+                                break
+                    except OSError:
+                        pass
+
+                if os.path.exists(path):
+                    try:
+                        print(f"[AssetManager] Loading {path}...")
+                        img = pygame.image.load(path)
+                        # Transform if necessary
+                        if name in ["player", "monster"]:
+                            img = pygame.transform.scale(img, (100, 150))
+                        elif name == "background":
+                            img = pygame.transform.scale(img, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
+                        self.images[name] = img
+                        break # Found it, stop checking extensions
+                    except pygame.error as e:
+                        print(f"[AssetManager] Failed to load {path}: {e}")
+
+            if self.images[name] is None:
+                 print(f"[AssetManager] Could not find image for '{name}'. Using fallback.")
 
 assets = None # Initialized in GameManager
 
@@ -684,8 +716,7 @@ class GameManager:
         elif self.state == STATE_BATTLE:
             # Draw Background
             if assets and assets.images.get("background"):
-                bg = pygame.transform.scale(assets.images["background"], (SCREEN_WIDTH, SCREEN_HEIGHT))
-                self.screen.blit(bg, (0, 0))
+                self.screen.blit(assets.images["background"], (0, 0))
 
             # Draw HUD
             self.draw_stats(self.player, 50, 50)
