@@ -81,7 +81,7 @@ class AssetManager:
                         img = pygame.image.load(path)
                         # Transform if necessary
                         if name in ["player", "monster"]:
-                            img = pygame.transform.scale(img, (100, 150))
+                            img = pygame.transform.scale(img, (200, 200))
                         elif name == "background":
                             img = pygame.transform.scale(img, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
@@ -724,7 +724,9 @@ class GameManager:
         elif self.state == STATE_BATTLE:
             # Draw Background
             if assets and assets.images.get("background"):
-                self.screen.blit(assets.images["background"], (0, 0))
+                bg = assets.images["background"]
+                bg.set_alpha(100) # Dim the background
+                self.screen.blit(bg, (0, 0))
 
             # Draw HUD
             self.draw_stats(self.player, 50, 50)
@@ -734,13 +736,13 @@ class GameManager:
             self.draw_log()
 
             # Draw Sprites
-            player_rect = pygame.Rect(100, 250, 100, 150)
+            player_rect = pygame.Rect(100, 200, 200, 200)
             if assets and assets.images.get("player"):
                 self.screen.blit(assets.images["player"], player_rect)
             else:
                 pygame.draw.rect(self.screen, BLUE, player_rect) # Fallback
 
-            monster_rect = pygame.Rect(SCREEN_WIDTH - 200, 250, 100, 150)
+            monster_rect = pygame.Rect(SCREEN_WIDTH - 300, 200, 200, 200)
             if assets and assets.images.get("monster"):
                 self.screen.blit(assets.images["monster"], monster_rect)
             else:
